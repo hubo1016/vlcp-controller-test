@@ -18,7 +18,7 @@ def init_environment(context,base_image):
     # 2. we should rewrite kvdb url to every conf file
     kvdb_ip_address = get_docker_ip(kvdb_docker)
 
-    config_path = os.getcwd() + "Features/config"
+    config_path = os.getcwd() + "/config"
     kvdb_url_format = re.compile(r'(module.redisdb.url=*)')
     for file in os.listdir(config_path):
         if file.endswith(".conf"):
@@ -98,7 +98,7 @@ def create_docker(image):
 
 def remove_docker(image):
     cmd = "docker rm -f %s" % image
-    subprocess.check_call(cmd,shell=True)
+    subprocess.check_output(cmd,shell=True)
 
 
 def get_docker_ip(docker):
@@ -121,7 +121,7 @@ def init_docker_host(context,docker):
     # copy wheel file
     vlcp_wheel = "vlcp-1.2.3-py2-none-any.whl"
 
-    if "vlcp" in context.config.userdata["vlcp"]:
+    if "vlcp" in context.config.userdata:
         vlcp_wheel = context.config.userdata["vlcp"]
 
     cmd = "docker cp %s %s:/opt" % (vlcp_wheel,docker)

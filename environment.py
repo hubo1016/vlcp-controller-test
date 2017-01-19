@@ -1,4 +1,5 @@
 import logging
+import sys
 
 from utils import init_environment, uninit_environment
 
@@ -20,7 +21,10 @@ def before_all(context):
     try:
         init_environment(context,docker_base_image)
     except Exception :
+        logger.warning("init environment error ", exc_info=True)
         uninit_environment(context)
+        sys.exit()
+
 
 def after_all(context):
     
