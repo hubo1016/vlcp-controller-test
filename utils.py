@@ -119,7 +119,7 @@ def init_docker_host(context,docker):
     call_in_docker(docker,cmd)
 
     # copy wheel file
-    vlcp_wheel = "vlcp-1.2.3-py2-none-any.whl"
+    vlcp_wheel = "*.whl"
 
     if "vlcp" in context.config.userdata:
         vlcp_wheel = context.config.userdata["vlcp"]
