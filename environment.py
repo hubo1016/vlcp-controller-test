@@ -6,6 +6,7 @@ from utils import init_environment, uninit_environment
 logging.basicConfig()
 logger = logging.getLogger(__name__)
 
+
 def before_all(context):
     base = "vlcp-controller/test"
     tag = "python2.7"
@@ -23,7 +24,7 @@ def before_all(context):
     except Exception :
         logger.warning("init environment error ", exc_info=True)
         uninit_environment(context)
-        sys.exit()
+        sys.exit(-1)
 
 
 def after_all(context):
