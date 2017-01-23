@@ -1,7 +1,7 @@
 import logging
 import sys
 
-from utils import init_environment, uninit_environment
+from utils import *
 
 logging.basicConfig()
 logger = logging.getLogger(__name__)
@@ -20,8 +20,8 @@ def before_all(context):
     docker_base_image = base + ":" + tag
 
     try:
-        init_environment(context,docker_base_image)
-    except Exception :
+        init_environment(context, docker_base_image)
+    except Exception:
         logger.warning("init environment error ", exc_info=True)
         uninit_environment(context)
         sys.exit(-1)
@@ -30,3 +30,50 @@ def before_all(context):
 def after_all(context):
     
     uninit_environment(context)
+
+
+def before_feature(context, feature):
+
+    try:
+        # every feature , clear kvdb , clear environment
+        cmd = "redis-cli FLUSHALL"
+        clear_kvdb(context, cmd)
+
+        if hasattr(context, "host1"):
+            clear_host_ns_env(context, context.host1)
+            prepare_config_file(context, feature)
+            restart_vlcp_controller(context.host1)
+
+        if hasattr(context, "host2"):
+            clear_host_ns_env(context, context.host2)
+            prepare_config_file(context, feature)
+            restart_vlcp_controller(context.host2)
+    except Exception:
+        logger.warning("init feature %s error", feature.name , exc_info=True)
+        uninit_environment(context)
+        sys.exit(-1)
+
+def after_feature(context, feature):
+    pass
+
+
+def prepare_config_file(context, feature):
+    # every feature mybe have different config
+    # so here map  feature name : config file
+    config_file_map = {
+        "ioprocessing vlan": "ioprocess.conf",
+        "ioprocessing vxlan prepush": "ioprocess.conf",
+        "ioprocessing vxlan flow learning": "ioprocess1.conf",
+        "ioprocessing vxlan controller learning": "ioprocess12.conf"
+    }
+
+    config_file = "config/%s" % "ioprocess.conf"
+
+    if feature.name in config_file_map:
+        config_file = "config/%s" % config_file_map[feature.name]
+
+        copy_file_to_host(config_file, context.host1, "/etc")
+        copy_file_to_host(config_file, context.host2, "/etc")
+
+
+

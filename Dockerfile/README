@@ -1,0 +1,3 @@
+# build Dockerfile python 2.7
+
+docker build . -t vlcp-controller/test:python2.7

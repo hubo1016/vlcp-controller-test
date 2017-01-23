@@ -1,0 +1,23 @@
+# from ubuntu 16.04 , apt-get will get ovs 2.5
+FROM ubuntu:16.04
+
+MAINTAINER gpl
+
+# update source , install runtime dependencies
+RUN apt-get update && apt-get install -y --no-install-recommends \
+                              openvswitch-switch \
+                              wget \
+                              iproute2 \
+                              iputils-ping \
+                   && rm -rf /var/lib/apt/lists/* 
+
+# install pip
+RUN if [ ! -e /usr/local/bin/pip2.7 ]; then : \
+         && wget  --no-check-certificate -O /tmp/get-pip.py 'https://bootstrap.pypa.io/get-pip.py' \
+         && python2.7 /tmp/get-pip.py \
+         && rm /tmp/get-pip.py \
+         && pip install coverage \
+         && pip install supervisor \
+    ; fi  
+
+CMD ["/bin/bash"]
