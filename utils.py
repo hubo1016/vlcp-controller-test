@@ -2,6 +2,7 @@ import subprocess
 import os
 import re
 import logging
+import time
 
 logger = logging.getLogger(__name__)
 
@@ -25,7 +26,8 @@ def init_environment(context, base_image):
             # config file is so small, so read all .. write all
             with open(config_path + "/" + file) as f:
                 lines = [line for line in f.readlines() if not kvdb_url_format.match(line)]
-                lines.append("module.redisdb.url=http://" + str(kvdb_ip_address))
+                url = "module.redisdb.url='http://%s'" % str(kvdb_ip_address)
+                lines.append(url)
 
             with open(config_path + "/" + file, "w") as f:
                 f.truncate()
@@ -162,11 +164,14 @@ def clear_host_ns_env(context,host):
     # clear all namespace
 
     for i in range(1,10):
-        cmd = "ovs-vsctl del-port veth%d 2>/dev/null 1>/dev/null" % i
-        call_in_docker(host, cmd)
+        try:
+            cmd = "ovs-vsctl del-port veth%d 2>/dev/null 1>/dev/null" % i
+            call_in_docker(host, cmd)
 
-        cmd = "ip netns del ns%d" % i
-        call_in_docker(host, cmd)
+            cmd = "ip netns del ns%d" % i
+            call_in_docker(host, cmd)
+        except Exception:
+            pass
 
 
 def init_docker_bridge(bridge):
@@ -261,3 +266,5 @@ def restart_vlcp_controller(host):
 
     cmd = "supervisorctl restart vlcp"
     call_in_docker(host, cmd)
+
+    time.sleep(5)

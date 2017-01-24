@@ -72,8 +72,8 @@ def prepare_config_file(context, feature):
     if feature.name in config_file_map:
         config_file = "config/%s" % config_file_map[feature.name]
 
-        copy_file_to_host(config_file, context.host1, "/etc")
-        copy_file_to_host(config_file, context.host2, "/etc")
+        copy_file_to_host(config_file, context.host1, "/etc/vlcp.conf")
+        copy_file_to_host(config_file, context.host2, "/etc/vlcp.conf")
 
 
 
