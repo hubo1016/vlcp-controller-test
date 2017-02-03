@@ -4,8 +4,12 @@ import re
 import logging
 import time
 
-logger = logging.getLogger(__name__)
+try:
+    from shlex import quote as shell_quote
+except Exception:
+    from pipes import  quote as shell_quote
 
+logger = logging.getLogger(__name__)
 
 def init_environment(context, base_image):
 
@@ -133,7 +137,8 @@ def init_docker_host(context, docker):
 
     # install vlcp
     cmd = "pip install --upgrade /opt/%s" % vlcp_wheel
-    call_in_docker(docker, cmd)
+    c = "docker exec %s bash -c %s" % (docker, shell_quote(cmd))
+    subprocess.check_output(c, shell=True)
 
     # copy supervisor conf to host
     cmd = "docker cp %s %s:/etc" % ("supervisord.conf",docker)
