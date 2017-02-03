@@ -2,6 +2,10 @@ from behave import *
 from apis import *
 from utils import *
 
+import re
+import time
+
+
 @Given ('create vlan physicalnetwork "{network_id}"')
 def create_vlan_physicalnetwork(context, network_id):
 
@@ -79,25 +83,107 @@ def ovs_add_interface(context, vethname, ifaceid, host):
     call_in_docker(host_map[host], cmd)
 
 
-@then ('check first logicalport ovs online')
-def check_first_logicalport_online(context):
-    pass
+@then ('check first logicalport ovs online "{host}"')
+def check_first_logicalport_online(context, host):
+
+    host_map = {"host1": context.host1, "host2": context.host2}
+
+    # table 0  flow number > 1
+    cmd = "ovs-ofctl dump-flows br0 -O Openflow13 | grep 'table=0' | wc -l "
+    result = call_in_docker(host_map[host], cmd)
+    assert int(result) > 1
+
+    # table 7  have IN_PORT
+    cmd = "ovs-ofctl dump-flows br0 -O Openflow13 | grep 'table=7' | grep 'IN_PORT' | wc -l"
+    resutl = call_in_docker(host_map[host], cmd)
+    assert int(result) >= 1
 
 
-@when ('check logicalport physicalport online')
-@then ('check logicalport physicalport online')
-def check_lp_port_online(context):
-    pass
 
+@when ('check logicalport physicalport online "{host}"')
+@then ('check logicalport physicalport online "{host}"')
+def check_lp_port_online(context, host):
+    host_map = {"host1": context.host1, "host2": context.host2}
 
-@then ('check logicalport physicalport offline')
-def check_lp_port_offline(context):
-    pass
+    time.sleep(5)
+
+    # table 0 flow number > 2
+    cmd = "ovs-ofctl dump-flows br0 -O Openflow13 | grep 'table=0' | wc -l"
+    result = call_in_docker(host_map[host], cmd)
+    assert int(result) > 2
+
+    # table 7 have push_vlan:0x8100
+    cmd = "ovs-ofctl dump-flows br0 -O Openflow13 | grep 'table=7' | grep 'push_vlan:0x8100' | wc -l"
+    result = call_in_docker(host_map[host], cmd)
+    assert int(result) >= 1
+
+@then ('check logicalport physicalport offline "{host}"')
+def check_lp_port_offline(context, host):
+    host_map = {"host1": context.host1, "host2": context.host2}
+
+    # table 0 flow number = 2
+    cmd = "ovs-ofctl dump-flows br0 -O Openflow13 | grep 'table=0' | wc -l "
+    result = call_in_docker(host_map[host], cmd)
+    assert int(result) <= 3
+
+    # table 7 have push_vlan:0x8100
+    cmd = "ovs-ofctl dump-flows br0 -O Openflow13 | grep 'table=7' | grep 'push_vlan:0x8100' | wc -l"
+    result = call_in_docker(host_map[host], cmd)
+    assert int(result) <= 0
 
 
 @then ('check two logicalport ping "{host1}" "{name1}" "{host2}" "{name2}"')
 def check_two_port_ping(context, host1, name1, host2, name2):
-    pass
+    host_map = {"host1": context.host1, "host2": context.host2}
+
+    # config ip address
+    flag = name1[-1:]
+    ns = "ns" + flag
+    ipaddr = "172.168.1.2/24"
+    veth = "vethns" + flag
+    cmd = "ip netns exec %s ip link set %s up" % (ns,veth)
+    call_in_docker(host_map[host1],cmd)
+    cmd = "ip netns exec %s ip addr add %s dev %s" % (ns,ipaddr,veth)
+    call_in_docker(host_map[host1],cmd)
+
+    # config ip address
+    flag = name2[-1:]
+    ns = "ns" + flag
+    ipaddr = "172.168.1.3/24"
+    veth = "vethns" + flag
+    cmd = "ip netns exec %s ip link set %s up" % (ns,veth)
+    call_in_docker(host_map[host2],cmd)
+    cmd = "ip netns exec %s ip addr add %s dev %s" % (ns,ipaddr,veth)
+    call_in_docker(host_map[host2],cmd)
+
+    # test ping
+    cmd = "ip netns exec %s ping %s -w 10 -c 5" % (ns,"172.168.1.2")
+    result = call_in_docker(host_map[host2],cmd)
+
+    pattern = re.compile("(\d)% packet loss")
+
+    match = pattern.search(result)
+    assert match is not None
+
+    if match:
+        loss = int(match.groups()[0])
+        assert loss <= 10
+
+    # clear ip addr
+    flag = name1[-1:]
+    ns = "ns" + flag
+    ipaddr = "172.168.1.2/24"
+    veth = "vethns" + flag
+    cmd = "ip netns exec %s ip addr del %s dev %s" % (ns,ipaddr,veth)
+    call_in_docker(host_map[host1],cmd)
+
+    # clear ip address
+    flag = name2[-1:]
+    ns = "ns" + flag
+    ipaddr = "172.168.1.3/24"
+    veth = "vethns" + flag
+    cmd = "ip netns exec %s ip addr del %s dev %s" % (ns,ipaddr,veth)
+    call_in_docker(host_map[host2],cmd)
 
 @when ('ovs remove interface "{vethname}" "{host}"')
 @then ('ovs remove interface "{vethname}" "{host}"')

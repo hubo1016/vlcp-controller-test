@@ -4,7 +4,7 @@ Feature: ioprocessing vlan
      and create logicalnetwork "1fd3954a" "edac6346"
      and create logicalport "d13f31a2" "1fd3954a"
      when ovs add interface "veth1" "d13f31a2" "host1"
-     then check first logicalport ovs online
+     then check first logicalport ovs online "host1"
      and ovs remove interface "veth1" "host1"
      and remove logicalport "d13f31a2"
 
@@ -14,7 +14,7 @@ Feature: ioprocessing vlan
     Scenario: first logicalport kvdb online
      Given ovs add interface "veth1" "d13f31a2" "host1"
      when create logicalport "d13f31a2" "1fd3954a"
-     then check first logicalport ovs online
+     then check first logicalport ovs online "host1"
      and ovs remove interface "veth1" "host1"
 
     # status: logicalport d13f31a2 kvdb
@@ -22,9 +22,9 @@ Feature: ioprocessing vlan
     Scenario: first logicalport physicalport online
      Given create physicalport "bridge" "edac6346"
      when ovs add interface "veth1" "d13f31a2" "host1"
-     then check logicalport physicalport online
+     then check logicalport physicalport online "host1"
      and ovs remove interface "bridge" "host1"
-     and check logicalport physicalport offline
+     and check logicalport physicalport offline "host1"
      and ovs add interface "bridge" "-" "host1"
 
     # status: physicalport bridge kvdb
