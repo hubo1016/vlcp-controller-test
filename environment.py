@@ -64,7 +64,7 @@ def prepare_config_file(context, feature):
         "ioprocessing vlan": "ioprocess.conf",
         "ioprocessing vxlan prepush": "ioprocess.conf",
         "ioprocessing vxlan flow learning": "ioprocess1.conf",
-        "ioprocessing vxlan controller learning": "ioprocess12.conf"
+        "ioprocessing vxlan controller learning": "ioprocess2.conf"
     }
 
     config_file = "config/%s" % "ioprocess.conf"
