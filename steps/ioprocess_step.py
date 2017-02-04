@@ -203,7 +203,9 @@ def ovs_remove_interface(context, vethname, host):
     
         call_in_docker(host_map[host], cmd)
 
+@when ('create physicalport "{name}" "{physicalnetwork}"')
 @Given ('create physicalport "{name}" "{physicalnetwork}"')
+@then ('create physicalport "{name}" "{physicalnetwork}"')
 def create_physicalport(context, name, physicalnetwork):
 
     c = create_physical_port(name, physicalnetwork)

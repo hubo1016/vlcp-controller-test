@@ -92,3 +92,17 @@ def create_physical_port(name, physicalnetwork, **kwargs):
     return command
 
 
+def remove_physical_port(name):
+
+
+    params = {"name":name}
+
+    params = urllib.urlencode(params)
+
+    url = endpoint + "/viperflow/deletephysicalport?%s" % params
+
+    #f = urllib2.urlopen(url).read()
+
+    command = "import urllib2; urllib2.urlopen('%s').read()" % url
+
+    return command
