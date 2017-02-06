@@ -27,12 +27,11 @@ def create_logicalnetwork(context,network_id, physicalnetwork):
     call_in_docker(context.host1, command)
 
 
+@when ('create logicalport "{network_id}" "{logicalnetwork}" "{mac}"')
+@Given ('create logicalport "{network_id}" "{logicalnetwork}" "{mac}"')
+def create_logicalport(context, network_id, logicalnetwork, mac):
 
-@when ('create logicalport "{network_id}" "{logicalnetwork}"')
-@Given ('create logicalport "{network_id}" "{logicalnetwork}"')
-def create_logicalport(context, network_id, logicalnetwork):
-
-    c = create_logical_port(network_id, logicalnetwork)
+    c = create_logical_port(network_id, logicalnetwork, mac_address=mac)
 
     command = 'python -c "%s"' % c
 
@@ -49,10 +48,10 @@ def remove_logicalport(context, network_id):
     call_in_docker(context.host1, command)
 
 
-@given ('ovs add interface "{vethname}" "{ifaceid}" "{host}"')
-@when ('ovs add interface "{vethname}" "{ifaceid}" "{host}"')
-@then ('ovs add interface "{vethname}" "{ifaceid}" "{host}"')
-def ovs_add_interface(context, vethname, ifaceid, host):
+@given ('ovs add interface "{vethname}" "{ifaceid}" "{host}" "{mac}"')
+@when ('ovs add interface "{vethname}" "{ifaceid}" "{host}" "{mac}"')
+@then ('ovs add interface "{vethname}" "{ifaceid}" "{host}" "{mac}"')
+def ovs_add_interface(context, vethname, ifaceid, host, mac):
     
     host_map = {"host1": context.host1, "host2": context.host2}
     if vethname == "bridge":
@@ -77,6 +76,10 @@ def ovs_add_interface(context, vethname, ifaceid, host):
 
     cmd = "ip link set %s netns %s" % ("vethns"+flag, ns)
     call_in_docker(host_map[host], cmd)
+
+    if mac:
+        cmd = "ip netns exec %s ip link set %s address %s" % (ns, "vethns"+flag, mac)
+        call_in_docker(host_map[host], cmd)
 
     cmd = "ovs-vsctl add-port br0 %s  -- set interface %s external_ids:iface-id=%s" % (vethname,vethname,ifaceid)
 
@@ -200,7 +203,9 @@ def ovs_remove_interface(context, vethname, host):
     
         call_in_docker(host_map[host], cmd)
 
+@when ('create physicalport "{name}" "{physicalnetwork}"')
 @Given ('create physicalport "{name}" "{physicalnetwork}"')
+@then ('create physicalport "{name}" "{physicalnetwork}"')
 def create_physicalport(context, name, physicalnetwork):
 
     c = create_physical_port(name, physicalnetwork)
