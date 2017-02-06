@@ -1,5 +1,9 @@
 #!/bin/bash -xe
 
+docker -v
+python -V
+pip -V
+
 imagename=vlcp-controller/test
 tag=python27
 
