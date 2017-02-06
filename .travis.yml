@@ -1,0 +1,8 @@
+language: python
+sudo: required
+python:
+  - "2.7"
+services:
+  - docker
+# command to run tests
+script: bash -xe starttest.sh
