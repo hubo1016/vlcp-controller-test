@@ -68,7 +68,7 @@ def check_flow_learn_flow(context):
 def check_controller_learn_flow(context):
 
     # table 2 have learn controller command
-    cmd = "ovs-ofctl dump-flows br0 -O Openflow13 | grep 'table=2' | grep 'controller'| wc -l"
+    cmd = "ovs-ofctl dump-flows br0 -O Openflow13 | grep 'table=5' | grep 'CONTROLLER'| wc -l"
     result = call_in_docker(context.host1, cmd)
 
     assert int(result) >= 1
