@@ -5,4 +5,4 @@ python:
 services:
   - docker
 # command to run tests
-script: bash -xe starttest.sh
+script: sudo bash -xe starttest.sh
