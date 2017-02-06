@@ -13,5 +13,7 @@ pip install -r requirements.txt
 
 [ -f vlcp*.whl ] || pip download --only-binary all --no-deps vlcp
 
+mkdir -p /var/run/netns
+
 behave --junit -D tag=${tag}
 
