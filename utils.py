@@ -141,6 +141,9 @@ def init_docker_host(context, docker):
     subprocess.check_output(c, shell=True)
 
     if "coverage" in context.config.userdata:
+        cmd = "docker cp %s %s:/opt" % ("coverage.conf", docker)
+        subprocess.check_call(cmd, shell=True)
+
         cmd = "sed -i 's~python~coverage run --rcfile=/opt/coverage.conf~g' %s" % "supervisord.conf"
         subprocess.check_call(cmd, shell=True)
 
