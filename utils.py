@@ -299,5 +299,5 @@ def collect_coverage_report(host, file):
     cmd = "docker cp %s:/opt/html_file ." % host
     subprocess.check_call(cmd, shell=True)
 
-    cmd = "docker cp %s:/opt/coverage_report" % host
+    cmd = "docker cp %s:/opt/coverage_report ." % host
     subprocess.check_call(cmd, shell=True)
