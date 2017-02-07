@@ -284,6 +284,12 @@ def restart_vlcp_controller(host):
 
 def collect_coverage_report(host, file):
 
+    cmd = "mkdir /opt/coverage_report"
+    call_in_docker(host, cmd)
+
+    cmd = "bash -c 'cd /opt && cp report_file.* coverage_report'"
+    call_in_docker(host, cmd)
+
     cmd = "coverage combine --rcfile=/opt/coverage.conf"
     call_in_docker(host, cmd)
 
@@ -291,4 +297,7 @@ def collect_coverage_report(host, file):
     call_in_docker(host, cmd)
 
     cmd = "docker cp %s:/opt/html_file ." % host
+    subprocess.check_call(cmd, shell=True)
+
+    cmd = "docker cp %s:/opt/coverage_report" % host
     subprocess.check_call(cmd, shell=True)
