@@ -26,7 +26,7 @@ Feature: l3switch arp prepush
     Scenario: l3switch logicalport on different node
         Given add router interface "c707aa9c" "31ce5574"
         and ovs remove interface "veth2" "host1"
-        when ovs add l3 interface "veth1" "963008a6" "host2" "be:cf:72:24:77:b0" "172.100.102.2" "172,100.102.1"
+        when ovs add l3 interface "veth1" "963008a6" "host2" "be:cf:72:24:77:b0" "172.100.102.2" "172.100.102.1"
 
         then check l3 prepush "be:cf:72:24:77:b0" "172.100.102.2" on "host1"
         and check l3 prepush "76:b8:46:68:eb:ac" "172.100.101.2" on "host2"

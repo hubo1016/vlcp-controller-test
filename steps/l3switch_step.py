@@ -49,14 +49,14 @@ def ovs_add_l3_interface(context, vethname, ifaceid, host, mac, ip, gateway):
         call_in_docker(host_map[host], cmd)
 
     if ip:
-        cmd = "ip netns exec %s ip addr set %s dev %s" % (ns, ip + "/24", "vethns" + flag )
+        cmd = "ip netns exec %s ip addr add %s dev %s" % (ns, ip + "/24", "vethns" + flag )
         call_in_docker(host_map[host], cmd)
 
         cmd = "ip netns exec %s ip link set dev %s up" % (ns, "vethns" + flag)
         call_in_docker(host_map[host], cmd)
 
     if gateway:
-        cmd = "ip netns exec %s ip router add default via %s" % (ns, gateway)
+        cmd = "ip netns exec %s ip route add default via %s" % (ns, gateway)
         call_in_docker(host_map[host], cmd)
 
     cmd = "ovs-vsctl add-port br0 %s  -- set interface %s external_ids:iface-id=%s" % (vethname, vethname, ifaceid)

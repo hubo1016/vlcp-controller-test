@@ -9,7 +9,7 @@ Feature: l3switch arp learn
         and create logicalnetwork "27807868" "edac6346"
         and create subnet "31ce5574","27807868","172.100.102.0/24" "172.100.102.1"
         and create l3 logicalport "963008a6" "27807868" "31ce5574" "be:cf:72:24:77:b0" "172.100.102.2"
-        and ovs add l3 interface "veth1" "963008a6" "host2" "be:cf:72:24:77:b0" "172.100.102.2" "172,100.102.1"
+        and ovs add l3 interface "veth1" "963008a6" "host2" "be:cf:72:24:77:b0" "172.100.102.2" "172.100.102.1"
 
         when create router "c707aa9c"
         and create physicalport "vxlan0" "edac6346"
