@@ -279,7 +279,6 @@ def restart_vlcp_controller(host):
     time.sleep(5)
 
 
-
 def collect_coverage_report(host, file):
 
     cmd = "coverage combine --rcfile=/opt/coverage.conf"
@@ -288,8 +287,5 @@ def collect_coverage_report(host, file):
     cmd = "coverage html --rcfile=/opt/coverage.conf"
     call_in_docker(host, cmd)
 
-    cmd = "bash -c 'cd /opt && tar zcf %s html_file'" % file
-    call_in_docker(host, cmd)
-
-    cmd = "docker cp %s:/opt/%s ." % (host, file)
+    cmd = "docker cp %s:/opt/html_file ." % host
     subprocess.check_call(cmd, shell=True)
