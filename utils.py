@@ -140,6 +140,10 @@ def init_docker_host(context, docker):
     c = "docker exec %s bash -c %s" % (docker, shell_quote(cmd))
     subprocess.check_output(c, shell=True)
 
+    if "coverage" in context.config.userdata:
+        cmd = "sed -i 's~python~coverage run --rcfile=/opt/coverage.conf~g' %s" % "supervisord.conf"
+        subprocess.check_call(cmd, shell=True)
+
     # copy supervisor conf to host
     cmd = "docker cp %s %s:/etc" % ("supervisord.conf",docker)
     subprocess.check_call(cmd, shell=True)
@@ -273,3 +277,19 @@ def restart_vlcp_controller(host):
     call_in_docker(host, cmd)
 
     time.sleep(5)
+
+
+
+def collect_coverage_report(host, file):
+
+    cmd = "coverage combine --rcfile=/opt/coverage.conf"
+    call_in_docker(host, cmd)
+
+    cmd = "coverage html --rcfile=/opt/coverage.conf"
+    call_in_docker(host, cmd)
+
+    cmd = "bash -c 'cd /opt && tar zcf %s html_file'" % file
+    call_in_docker(host, cmd)
+
+    cmd = "docker cp %s:/opt/%s ." % (host, file)
+    subprocess.check_call(cmd, shell=True)

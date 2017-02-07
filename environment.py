@@ -28,7 +28,12 @@ def before_all(context):
 
 
 def after_all(context):
-    
+    if "coverage" in context.config.userdata:
+        # to collect all coverage report file , restart vlcp controller
+        restart_vlcp_controller(context.host1)
+        # collect coverage report
+        collect_coverage_report(context.host1, "coverage_report.tar.gz")
+
     uninit_environment(context)
 
 
