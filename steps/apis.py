@@ -106,3 +106,66 @@ def remove_physical_port(name):
     command = "import urllib2; urllib2.urlopen('%s').read()" % url
 
     return command
+
+
+def create_subnet(subnet_id, logicalnetwork, cidr, gateway, **kwargs):
+
+    params = {"id":subnet_id, "logicalnetwork": logicalnetwork,
+              "cidr": cidr, "gateway": gateway}
+
+    params.update(kwargs)
+
+    params = urllib.urlencode(params)
+
+    url = endpoint + "/viperflow/createsubnet?%s" % params
+
+    command = "import urllib2; urllib2.urlopen('%s').read()" % url
+
+    return command
+
+
+def create_router(id,**kwargs):
+
+    pararms = {"id":id}
+
+    pararms.update(kwargs)
+
+    pararms = urllib.urlencode(pararms)
+
+    url = endpoint + "/vrouterapi/createvirtualrouter?%s" % pararms
+
+    command = "import urllib2; urllib2.urlopen('%s').read()" % url
+
+    return command
+
+
+def add_router_interface(router,subnet, **kwargs):
+
+    params = {"router":router, "subnet": subnet}
+
+    params.update(kwargs)
+
+
+    params = urllib.urlencode(params)
+
+    url = endpoint + "/vrouterapi/addrouterinterface?%s" % params
+
+    command = "import urllib2; urllib2.urlopen('%s').read()" % url
+
+    return command
+
+def del_router_interface(router, subnet, **kwargs):
+
+
+    params = {"router":router, "subnet": subnet}
+
+    params.update(kwargs)
+
+
+    params = urllib.urlencode(params)
+
+    url = endpoint + "/vrouterapi/removerouterinterface?%s" % params
+
+    command = "import urllib2; urllib2.urlopen('%s').read()" % url
+
+    return command

@@ -188,6 +188,8 @@ def check_two_port_ping(context, host1, name1, host2, name2):
     cmd = "ip netns exec %s ip addr del %s dev %s" % (ns,ipaddr,veth)
     call_in_docker(host_map[host2],cmd)
 
+
+@given ('ovs remove interface "{vethname}" "{host}"')
 @when ('ovs remove interface "{vethname}" "{host}"')
 @then ('ovs remove interface "{vethname}" "{host}"')
 def ovs_remove_interface(context, vethname, host):

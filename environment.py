@@ -67,7 +67,10 @@ def prepare_config_file(context, feature):
         "ioprocessing vxlan controller learning": "ioprocess2.conf",
         "l2switch prepush":"l2switch.conf",
         "l2switch flow learning" : "l2switch1.conf",
-        "l2switch controller learning" : "l2switch2.conf"
+        "l2switch controller learning" : "l2switch2.conf",
+        "l3switch arp prepush" : "l3switch.conf",
+        "l3switch arp learn" : "l3switch1.conf",
+        "l3switch external network" : "l3switch3.conf"
     }
 
     config_file = "config/%s" % "ioprocess.conf"
