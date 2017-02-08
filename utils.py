@@ -136,7 +136,7 @@ def init_docker_host(context, docker):
     subprocess.check_call(cmd, shell=True)
 
     # install vlcp
-    cmd = "pip install --upgrade /opt/%s" % vlcp_wheel
+    cmd = "/opt/pip install --upgrade /opt/%s" % vlcp_wheel
     c = "docker exec %s bash -c %s" % (docker, shell_quote(cmd))
     subprocess.check_output(c, shell=True)
 
@@ -144,7 +144,7 @@ def init_docker_host(context, docker):
         cmd = "docker cp %s %s:/opt" % ("coverage.conf", docker)
         subprocess.check_call(cmd, shell=True)
 
-        cmd = "sed -i 's~python~coverage run --rcfile=/opt/coverage.conf~g' %s" % "supervisord.conf"
+        cmd = "sed -i 's~/opt/python~/opt/coverage run --rcfile=/opt/coverage.conf~g' %s" % "supervisord.conf"
         subprocess.check_call(cmd, shell=True)
 
     # copy supervisor conf to host
@@ -290,10 +290,10 @@ def collect_coverage_report(host, file):
     cmd = "bash -c 'cd /opt && cp report_file.* coverage_report'"
     call_in_docker(host, cmd)
 
-    cmd = "coverage combine --rcfile=/opt/coverage.conf"
+    cmd = "/opt/coverage combine --rcfile=/opt/coverage.conf"
     call_in_docker(host, cmd)
 
-    cmd = "coverage html --rcfile=/opt/coverage.conf"
+    cmd = "/opt/coverage html --rcfile=/opt/coverage.conf"
     call_in_docker(host, cmd)
 
     cmd = "docker cp %s:/opt/html_file ." % host

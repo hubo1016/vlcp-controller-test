@@ -1,3 +1,13 @@
 # build Dockerfile python 2.7
 
-docker build . -t vlcp-controller/test:python2.7
+docker build . -t vlcp-controller/test:python2.7 -f Dockerfile_python27
+
+
+# build Dockerfile python 3
+
+docker build . -t vlcp-controller/test:python3 -f Dockerfile_python3
+
+
+# build Dockerfile pypy
+
+docker build . -t vlcp-controller/test:pypy -f Dockerfile_pypy
