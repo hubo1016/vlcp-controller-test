@@ -1,5 +1,7 @@
 import urllib
-import urllib2
+import time
+
+from utils import call_in_docker
 
 endpoint = 'http://127.0.0.1:8081'
 
@@ -169,3 +171,13 @@ def del_router_interface(router, subnet, **kwargs):
     command = "import urllib2; urllib2.urlopen('%s').read()" % url
 
     return command
+
+
+
+def check_flow_table(host, cmd):
+
+    time.sleep(2)
+
+    result = call_in_docker(host,cmd)
+
+    return result

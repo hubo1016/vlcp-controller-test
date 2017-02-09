@@ -3,7 +3,7 @@ from apis import *
 from utils import *
 
 import re
-import time
+
 
 
 @Given ('create vlan physicalnetwork "{network_id}"')
@@ -98,7 +98,8 @@ def check_first_logicalport_online(context, host):
     ingress = flow["ingress"]
 
     cmd = "ovs-ofctl dump-flows br0 -O Openflow13 | grep 'table=%s' | wc -l " % ingress
-    result = call_in_docker(host_map[host], cmd)
+
+    result = check_flow_table(host_map[host], cmd)
     assert int(result) > 1
 
     # table egress  have IN_PORT
@@ -106,7 +107,7 @@ def check_first_logicalport_online(context, host):
     egress = flow["egress"]
 
     cmd = "ovs-ofctl dump-flows br0 -O Openflow13 | grep 'table=%s' | grep 'IN_PORT' | wc -l" % egress
-    result = call_in_docker(host_map[host], cmd)
+    result = check_flow_table(host_map[host], cmd)
     assert int(result) >= 1
 
 
@@ -122,10 +123,8 @@ def check_lp_port_online(context, host):
     assert "ingress" in flow
     ingress = flow["ingress"]
 
-    time.sleep(2)
-
     cmd = "ovs-ofctl dump-flows br0 -O Openflow13 | grep 'table=%s' | wc -l" % ingress
-    result = call_in_docker(host_map[host], cmd)
+    result = check_flow_table(host_map[host], cmd)
     assert int(result) > 2
 
     # table egress have push_vlan:0x8100
@@ -133,7 +132,7 @@ def check_lp_port_online(context, host):
     egress = flow["egress"]
 
     cmd = "ovs-ofctl dump-flows br0 -O Openflow13 | grep 'table=%s' | grep 'push_vlan:0x8100' | wc -l" % egress
-    result = call_in_docker(host_map[host], cmd)
+    result = check_flow_table(host_map[host], cmd)
     assert int(result) >= 1
 
 @then ('check logicalport physicalport offline "{host}"')
@@ -147,7 +146,7 @@ def check_lp_port_offline(context, host):
     ingress = flow["ingress"]
 
     cmd = "ovs-ofctl dump-flows br0 -O Openflow13 | grep 'table=%s' | wc -l " % ingress
-    result = call_in_docker(host_map[host], cmd)
+    result = check_flow_table(host_map[host], cmd)
     assert int(result) <= 3
 
     # table egress have push_vlan:0x8100
@@ -155,7 +154,7 @@ def check_lp_port_offline(context, host):
     egress = flow["egress"]
 
     cmd = "ovs-ofctl dump-flows br0 -O Openflow13 | grep 'table=%s' | grep 'push_vlan:0x8100' | wc -l" % egress
-    result = call_in_docker(host_map[host], cmd)
+    result = check_flow_table(host_map[host], cmd)
     assert int(result) <= 0
 
 

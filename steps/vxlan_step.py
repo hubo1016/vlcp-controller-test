@@ -2,7 +2,6 @@ from behave import *
 from utils import *
 from apis import *
 
-import time
 
 @Given('create vxlan physicalnetwork "{network_id}"')
 def create_vxlan_physicalnetwork(context, network_id):
@@ -30,7 +29,7 @@ def check_vxlan_physicalport_online(context):
 
     cmd = "ovs-ofctl dump-flows br0 -O Openflow13 | grep 'table=%s' | grep 'tun_id=' | wc -l" % ingress
 
-    result = call_in_docker(context.host1, cmd)
+    result = check_flow_table(context.host1, cmd)
 
     assert int(result) >= 1
 
@@ -44,7 +43,7 @@ def check_vxlan_physicalport_offline(context):
 
     cmd = "ovs-ofctl dump-flows br0 -O Openflow13 | grep 'table=%s' | grep 'tun_id=' | wc -l" % ingress
 
-    result = call_in_docker(context.host1, cmd)
+    result = check_flow_table(context.host1, cmd)
 
     assert int(result) <= 0
 
@@ -54,8 +53,6 @@ def check_vxlan_prepush(context, mac, host):
     host_map = {"host1": context.host1, "host2": context.host2}
     flow_map = {"host1": context.host1_flow_map, "host2": context.host2_flow_map}
 
-    time.sleep(2)
-
     flow = flow_map[host]
     # vxlanoutput table should have prepush flow
     assert "vxlanoutput" in flow
@@ -63,7 +60,7 @@ def check_vxlan_prepush(context, mac, host):
 
     cmd = "ovs-ofctl dump-flows br0 -O Openflow13 | grep 'table=%s' | grep %s | wc -l" % (vxlanoutput,mac)
 
-    result = call_in_docker(host_map[host], cmd)
+    result = check_flow_table(host_map[host], cmd)
 
     assert int(result) >= 1
 
@@ -74,9 +71,8 @@ def check_flow_learn_flow(context):
     assert "vxlaninput" in context.host1_flow_map
     vxlaninput = context.host1_flow_map["vxlaninput"]
 
-    time.sleep(2)
     cmd = "ovs-ofctl dump-flows br0 -O Openflow13 | grep 'table=%s' | grep 'learn'| wc -l" % vxlaninput
-    result = call_in_docker(context.host1, cmd)
+    result = check_flow_table(context.host1, cmd)
 
     assert int(result) >= 1
 
@@ -89,7 +85,7 @@ def check_controller_learn_flow(context):
     vxlanoutput = context.host1_flow_map["vxlanoutput"]
 
     cmd = "ovs-ofctl dump-flows br0 -O Openflow13 | grep 'table=%s' | grep 'CONTROLLER'| wc -l" % vxlanoutput
-    result = call_in_docker(context.host1, cmd)
+    result = check_flow_table(context.host1, cmd)
 
     assert int(result) >= 1
 
@@ -105,10 +101,9 @@ def check_vxlan_learn(context, mac, host):
     assert "vxlanlearning" in flow
     vxlanlearning = flow["vxlanlearning"]
 
-    time.sleep(2)
     cmd = "ovs-ofctl dump-flows br0 -O Openflow13 | grep 'table=%s' | grep %s | wc -l" % (vxlanlearning,mac)
 
-    result = call_in_docker(host_map[host], cmd)
+    result = check_flow_table(host_map[host], cmd)
 
     assert int(result) >= 1
 

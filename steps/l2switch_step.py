@@ -1,4 +1,5 @@
 from behave import *
+from apis import *
 from utils import *
 
 
@@ -9,7 +10,7 @@ def check_l2switch_prepush(context, mac, host):
     # on l2output flow will have mac flow
     cmd = "ovs-ofctl dump-flows br0 -O Openflow13 | grep 'table=4' | grep %s | wc -l" % mac
 
-    result = call_in_docker(host_map[host], cmd)
+    result = check_flow_table(host_map[host], cmd)
 
     assert int(result) >= 1
 
@@ -22,7 +23,7 @@ def check_l2switch_flow_learn(context):
     l2input = context.host1_flow_map["l2input"]
     cmd = "ovs-ofctl dump-flows br0 -O Openflow13 | grep 'table=%s' | grep 'learn' | wc -l" % l2input
 
-    result = call_in_docker(context.host1, cmd)
+    result = check_flow_table(context.host1, cmd)
 
     assert int(result) >= 1
 
@@ -34,7 +35,7 @@ def check_l2switch_controller_learn(context):
     l2input = context.host1_flow_map["l2input"]
     cmd = "ovs-ofctl dump-flows br0 -O Openflow13 | grep 'table=%s' | grep 'CONTROLLER' | wc -l" % l2input
 
-    result = call_in_docker(context.host1, cmd)
+    result = check_flow_table(context.host1, cmd)
 
     assert int(result) >= 1
 
@@ -51,7 +52,7 @@ def check_l2switch_learn(context, mac, host):
 
     cmd = "ovs-ofctl dump-flows br0 -O Openflow13 | grep 'table=%s' | grep %s | wc -l" % (l2learning, mac)
 
-    result = call_in_docker(host_map[host], cmd)
+    result = check_flow_table(host_map[host], cmd)
 
     assert int(result) >= 1
 
@@ -68,6 +69,6 @@ def check_l2switch_learn(context, mac, host):
 
     cmd = "ovs-ofctl dump-flows br0 -O Openflow13 | grep 'table=%s' | grep %s | wc -l" % (l2output,mac)
 
-    result = call_in_docker(host_map[host], cmd)
+    result = check_flow_table(host_map[host], cmd)
 
     assert int(result) >= 1

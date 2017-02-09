@@ -2,8 +2,6 @@ from behave import *
 from apis import *
 from utils import *
 
-import time
-
 @given('create subnet "{subnet_id}","{logicalnetwork}","{cidr}" "{gateway}"')
 def add_subnet(context, subnet_id, logicalnetwork, cidr, gateway):
 
@@ -105,20 +103,18 @@ def check_l3_prepush(context, mac , ip, host):
 
     flow = flow_map[host]
 
-    time.sleep(2)
-
     assert "l3output" in flow
     l3output = flow["l3output"]
     # there is mac ip flow in table l3output
     cmd = "ovs-ofctl dump-flows br0 -O Openflow13 | grep 'table=%s' | grep %s | wc -l" % (l3output, mac)
 
-    result = call_in_docker(host_map[host], cmd)
+    result = check_flow_table(host_map[host], cmd)
 
     assert int(result) >= 1
 
     cmd = "ovs-ofctl dump-flows br0 -O Openflow13 | grep 'table=%s' | grep %s | wc -l" % (l3output, ip)
 
-    result = call_in_docker(host_map[host], cmd)
+    result = check_flow_table(host_map[host], cmd)
 
     assert int(result) >= 1
 
@@ -136,13 +132,13 @@ def check_l3__no_prepush(context, mac , ip, host):
     # there is no mac ip flow in table l3output
     cmd = "ovs-ofctl dump-flows br0 -O Openflow13 | grep 'table=%s' | grep %s | wc -l" % (l3output, mac)
 
-    result = call_in_docker(host_map[host], cmd)
+    result = check_flow_table(host_map[host], cmd)
 
     assert int(result) <= 0
 
     cmd = "ovs-ofctl dump-flows br0 -O Openflow13 | grep 'table=%s' | grep %s | wc -l" % (l3output, ip)
 
-    result = call_in_docker(host_map[host], cmd)
+    result = check_flow_table(host_map[host], cmd)
 
     assert int(result) <= 0
 
