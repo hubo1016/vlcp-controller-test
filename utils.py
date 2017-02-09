@@ -3,6 +3,7 @@ import os
 import re
 import logging
 import time
+import json
 
 try:
     from shlex import quote as shell_quote
@@ -301,3 +302,20 @@ def collect_coverage_report(host, file):
 
     cmd = "docker cp %s:/opt/coverage_report ." % host
     subprocess.check_call(cmd, shell=True)
+
+
+def get_flow_map(host):
+
+    url = "http://127.0.0.1:8081/openflowmanager/lastacquiredtables"
+
+    c = "import urllib2; f=urllib2.urlopen('%s'); print f.read()" % url
+
+    cmd = 'python -c "%s"' % c
+
+    result = call_in_docker(host, cmd)
+
+    msg = json.loads(result)
+
+    map = dict(msg['result'][0])
+
+    return map

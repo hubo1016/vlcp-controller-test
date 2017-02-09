@@ -2,6 +2,8 @@ from behave import *
 from apis import *
 from utils import *
 
+import time
+
 @given('create subnet "{subnet_id}","{logicalnetwork}","{cidr}" "{gateway}"')
 def add_subnet(context, subnet_id, logicalnetwork, cidr, gateway):
 
@@ -99,15 +101,22 @@ def remove_router_interface(context, router, subnet):
 def check_l3_prepush(context, mac , ip, host):
 
     host_map = {"host1": context.host1, "host2": context.host2}
+    flow_map = {"host1": context.host1_flow_map, "host2": context.host2_flow_map}
 
+    flow = flow_map[host]
+
+    time.sleep(2)
+
+    assert "l3output" in flow
+    l3output = flow["l3output"]
     # there is mac ip flow in table l3output
-    cmd = "ovs-ofctl dump-flows br0 -O Openflow13 | grep 'table=6' | grep %s | wc -l" % mac
+    cmd = "ovs-ofctl dump-flows br0 -O Openflow13 | grep 'table=%s' | grep %s | wc -l" % (l3output, mac)
 
     result = call_in_docker(host_map[host], cmd)
 
     assert int(result) >= 1
 
-    cmd = "ovs-ofctl dump-flows br0 -O Openflow13 | grep 'table=6' | grep %s | wc -l" % ip
+    cmd = "ovs-ofctl dump-flows br0 -O Openflow13 | grep 'table=%s' | grep %s | wc -l" % (l3output, ip)
 
     result = call_in_docker(host_map[host], cmd)
 
@@ -118,15 +127,20 @@ def check_l3_prepush(context, mac , ip, host):
 def check_l3__no_prepush(context, mac , ip, host):
 
     host_map = {"host1": context.host1, "host2": context.host2}
+    flow_map = {"host1": context.host1_flow_map, "host2": context.host2_flow_map}
 
+    flow = flow_map[host]
+
+    assert "l3output" in flow
+    l3output = flow["l3output"]
     # there is no mac ip flow in table l3output
-    cmd = "ovs-ofctl dump-flows br0 -O Openflow13 | grep 'table=6' | grep %s | wc -l" % mac
+    cmd = "ovs-ofctl dump-flows br0 -O Openflow13 | grep 'table=%s' | grep %s | wc -l" % (l3output, mac)
 
     result = call_in_docker(host_map[host], cmd)
 
     assert int(result) <= 0
 
-    cmd = "ovs-ofctl dump-flows br0 -O Openflow13 | grep 'table=6' | grep %s | wc -l" % ip
+    cmd = "ovs-ofctl dump-flows br0 -O Openflow13 | grep 'table=%s' | grep %s | wc -l" % (l3output, ip)
 
     result = call_in_docker(host_map[host], cmd)
 

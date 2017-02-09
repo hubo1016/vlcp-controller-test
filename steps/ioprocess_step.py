@@ -90,15 +90,23 @@ def ovs_add_interface(context, vethname, ifaceid, host, mac):
 def check_first_logicalport_online(context, host):
 
     host_map = {"host1": context.host1, "host2": context.host2}
+    flow_map = {"host1": context.host1_flow_map, "host2": context.host2_flow_map}
 
-    # table 0  flow number > 1
-    cmd = "ovs-ofctl dump-flows br0 -O Openflow13 | grep 'table=0' | wc -l "
+    flow = flow_map[host]
+    # table ingress  flow number > 1
+    assert "ingress" in flow
+    ingress = flow["ingress"]
+
+    cmd = "ovs-ofctl dump-flows br0 -O Openflow13 | grep 'table=%s' | wc -l " % ingress
     result = call_in_docker(host_map[host], cmd)
     assert int(result) > 1
 
-    # table 7  have IN_PORT
-    cmd = "ovs-ofctl dump-flows br0 -O Openflow13 | grep 'table=7' | grep 'IN_PORT' | wc -l"
-    resutl = call_in_docker(host_map[host], cmd)
+    # table egress  have IN_PORT
+    assert "egress" in flow
+    egress = flow["egress"]
+
+    cmd = "ovs-ofctl dump-flows br0 -O Openflow13 | grep 'table=%s' | grep 'IN_PORT' | wc -l" % egress
+    result = call_in_docker(host_map[host], cmd)
     assert int(result) >= 1
 
 
@@ -107,30 +115,46 @@ def check_first_logicalport_online(context, host):
 @then ('check logicalport physicalport online "{host}"')
 def check_lp_port_online(context, host):
     host_map = {"host1": context.host1, "host2": context.host2}
+    flow_map = {"host1": context.host1_flow_map, "host2": context.host2_flow_map}
 
-    time.sleep(5)
+    flow = flow_map[host]
+    # table ingress  flow number > 2
+    assert "ingress" in flow
+    ingress = flow["ingress"]
 
-    # table 0 flow number > 2
-    cmd = "ovs-ofctl dump-flows br0 -O Openflow13 | grep 'table=0' | wc -l"
+    time.sleep(2)
+
+    cmd = "ovs-ofctl dump-flows br0 -O Openflow13 | grep 'table=%s' | wc -l" % ingress
     result = call_in_docker(host_map[host], cmd)
     assert int(result) > 2
 
-    # table 7 have push_vlan:0x8100
-    cmd = "ovs-ofctl dump-flows br0 -O Openflow13 | grep 'table=7' | grep 'push_vlan:0x8100' | wc -l"
+    # table egress have push_vlan:0x8100
+    assert "egress" in flow
+    egress = flow["egress"]
+
+    cmd = "ovs-ofctl dump-flows br0 -O Openflow13 | grep 'table=%s' | grep 'push_vlan:0x8100' | wc -l" % egress
     result = call_in_docker(host_map[host], cmd)
     assert int(result) >= 1
 
 @then ('check logicalport physicalport offline "{host}"')
 def check_lp_port_offline(context, host):
     host_map = {"host1": context.host1, "host2": context.host2}
+    flow_map = {"host1": context.host1_flow_map, "host2": context.host2_flow_map}
 
-    # table 0 flow number = 2
-    cmd = "ovs-ofctl dump-flows br0 -O Openflow13 | grep 'table=0' | wc -l "
+    flow = flow_map[host]
+    # table egress flow number = 2
+    assert "ingress" in flow
+    ingress = flow["ingress"]
+
+    cmd = "ovs-ofctl dump-flows br0 -O Openflow13 | grep 'table=%s' | wc -l " % ingress
     result = call_in_docker(host_map[host], cmd)
     assert int(result) <= 3
 
-    # table 7 have push_vlan:0x8100
-    cmd = "ovs-ofctl dump-flows br0 -O Openflow13 | grep 'table=7' | grep 'push_vlan:0x8100' | wc -l"
+    # table egress have push_vlan:0x8100
+    assert "egress" in flow
+    egress = flow["egress"]
+
+    cmd = "ovs-ofctl dump-flows br0 -O Openflow13 | grep 'table=%s' | grep 'push_vlan:0x8100' | wc -l" % egress
     result = call_in_docker(host_map[host], cmd)
     assert int(result) <= 0
 
@@ -194,7 +218,7 @@ def check_two_port_ping(context, host1, name1, host2, name2):
 @then ('ovs remove interface "{vethname}" "{host}"')
 def ovs_remove_interface(context, vethname, host):
     host_map = {"host1": context.host1, "host2": context.host2}
-    
+
     cmd = "ovs-vsctl del-port %s" % vethname
     
     call_in_docker(host_map[host], cmd)

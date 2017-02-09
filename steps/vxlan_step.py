@@ -24,8 +24,11 @@ def delete_physical_port(context, name):
 
 @then("check vxlan physicalport online")
 def check_vxlan_physicalport_online(context):
-    # table 0 have tun_id flow > 0
-    cmd = "ovs-ofctl dump-flows br0 -O Openflow13 | grep 'table=0' | grep 'tun_id=' | wc -l"
+    # table egress have tun_id flow > 0
+    assert "ingress" in context.host1_flow_map
+    ingress = context.host1_flow_map["ingress"]
+
+    cmd = "ovs-ofctl dump-flows br0 -O Openflow13 | grep 'table=%s' | grep 'tun_id=' | wc -l" % ingress
 
     result = call_in_docker(context.host1, cmd)
 
@@ -35,8 +38,11 @@ def check_vxlan_physicalport_online(context):
 @Then("check vxlan physicalport offline")
 def check_vxlan_physicalport_offline(context):
 
-    # table 0 have tun_id flow < 1
-    cmd = "ovs-ofctl dump-flows br0 -O Openflow13 | grep 'table=0' | grep 'tun_id=' | wc -l"
+    # table egress have tun_id flow < 1
+    assert "ingress" in context.host1_flow_map
+    ingress = context.host1_flow_map["ingress"]
+
+    cmd = "ovs-ofctl dump-flows br0 -O Openflow13 | grep 'table=%s' | grep 'tun_id=' | wc -l" % ingress
 
     result = call_in_docker(context.host1, cmd)
 
@@ -46,10 +52,16 @@ def check_vxlan_physicalport_offline(context):
 @Then('check prepush "{mac}" on "{host}"')
 def check_vxlan_prepush(context, mac, host):
     host_map = {"host1": context.host1, "host2": context.host2}
+    flow_map = {"host1": context.host1_flow_map, "host2": context.host2_flow_map}
 
     time.sleep(2)
+
+    flow = flow_map[host]
     # vxlanoutput table should have prepush flow
-    cmd = "ovs-ofctl dump-flows br0 -O Openflow13 | grep 'table=5' | grep %s | wc -l" % mac
+    assert "vxlanoutput" in flow
+    vxlanoutput = flow["vxlanoutput"]
+
+    cmd = "ovs-ofctl dump-flows br0 -O Openflow13 | grep 'table=%s' | grep %s | wc -l" % (vxlanoutput,mac)
 
     result = call_in_docker(host_map[host], cmd)
 
@@ -58,17 +70,25 @@ def check_vxlan_prepush(context, mac, host):
 @then("check flow learn flow")
 def check_flow_learn_flow(context):
 
-    # table 2 have learn flow command
-    cmd = "ovs-ofctl dump-flows br0 -O Openflow13 | grep 'table=2' | grep 'learn'| wc -l"
+    # table vxlaninput have learn flow command
+    assert "vxlaninput" in context.host1_flow_map
+    vxlaninput = context.host1_flow_map["vxlaninput"]
+
+    time.sleep(2)
+    cmd = "ovs-ofctl dump-flows br0 -O Openflow13 | grep 'table=%s' | grep 'learn'| wc -l" % vxlaninput
     result = call_in_docker(context.host1, cmd)
 
     assert int(result) >= 1
 
+
 @then("check controller learn flow")
 def check_controller_learn_flow(context):
 
-    # table 2 have learn controller command
-    cmd = "ovs-ofctl dump-flows br0 -O Openflow13 | grep 'table=5' | grep 'CONTROLLER'| wc -l"
+    # table vxlaninput have learn controller command
+    assert "vxlanoutput" in context.host1_flow_map
+    vxlanoutput = context.host1_flow_map["vxlanoutput"]
+
+    cmd = "ovs-ofctl dump-flows br0 -O Openflow13 | grep 'table=%s' | grep 'CONTROLLER'| wc -l" % vxlanoutput
     result = call_in_docker(context.host1, cmd)
 
     assert int(result) >= 1
@@ -78,9 +98,15 @@ def check_controller_learn_flow(context):
 def check_vxlan_learn(context, mac, host):
 
     host_map = {"host1": context.host1, "host2": context.host2}
+    flow_map = {"host1": context.host1_flow_map, "host2": context.host2_flow_map}
 
+    flow = flow_map[host]
     # vxlanlearning table should have prepush flow
-    cmd = "ovs-ofctl dump-flows br0 -O Openflow13 | grep 'table=6' | grep %s | wc -l" % mac
+    assert "vxlanlearning" in flow
+    vxlanlearning = flow["vxlanlearning"]
+
+    time.sleep(2)
+    cmd = "ovs-ofctl dump-flows br0 -O Openflow13 | grep 'table=%s' | grep %s | wc -l" % (vxlanlearning,mac)
 
     result = call_in_docker(host_map[host], cmd)
 

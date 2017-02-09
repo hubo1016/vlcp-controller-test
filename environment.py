@@ -49,10 +49,19 @@ def before_feature(context, feature):
             prepare_config_file(context, feature)
             restart_vlcp_controller(context.host1)
 
+            # restart controller , to get flow name number map used in check
+
+            flow_map = get_flow_map(context.host1)
+            context.host1_flow_map = flow_map
+
         if hasattr(context, "host2"):
             clear_host_ns_env(context, context.host2)
             prepare_config_file(context, feature)
             restart_vlcp_controller(context.host2)
+
+            flow_map = get_flow_map(context.host2)
+            context.host2_flow_map = flow_map
+
     except Exception:
         logger.warning("init feature %s error", feature.name , exc_info=True)
         uninit_environment(context)
