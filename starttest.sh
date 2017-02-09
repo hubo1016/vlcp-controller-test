@@ -15,5 +15,7 @@ pip install -r requirements.txt
 
 mkdir -p /var/run/netns
 
+modprobe openvswitch
+
 behave --junit -D tag=${tag}
 
