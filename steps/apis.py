@@ -5,6 +5,10 @@ from utils import call_in_docker
 
 endpoint = 'http://127.0.0.1:8081'
 
+try:
+    from urllib import urlencode
+except Exception:
+    from urllib.parse import urlencode
 
 def create_physical_network(id, type = "vlan",**kwargs):
 
@@ -17,7 +21,7 @@ def create_physical_network(id, type = "vlan",**kwargs):
 
     params.update(kwargs)
 
-    params = urllib.urlencode(params)
+    params = urlencode(params)
 
     url = endpoint + "/viperflow/createphysicalnetwork?%s" % params
 
@@ -34,7 +38,7 @@ def create_logical_network(id, physicalnetwork, **kwargs):
 
     params.update(kwargs)
 
-    params = urllib.urlencode(params)
+    params = urlencode(params)
 
     url = endpoint + "/viperflow/createlogicalnetwork?%s" % params
 
@@ -51,7 +55,7 @@ def create_logical_port(id, logicalnetwork, **kwargs):
 
     params.update(kwargs)
 
-    params = urllib.urlencode(params)
+    params = urlencode(params)
 
     url = endpoint + "/viperflow/createlogicalport?%s" % params
 
@@ -66,7 +70,7 @@ def remove_logical_port(id):
 
     params = {"id":id}
 
-    params = urllib.urlencode(params)
+    params = urlencode(params)
 
     url = endpoint + "/viperflow/deletelogicalport?%s" % params
 
@@ -83,7 +87,7 @@ def create_physical_port(name, physicalnetwork, **kwargs):
 
     params.update(kwargs)
 
-    params = urllib.urlencode(params)
+    params = urlencode(params)
 
     url = endpoint + "/viperflow/createphysicalport?%s" % params
 
@@ -99,7 +103,7 @@ def remove_physical_port(name):
 
     params = {"name":name}
 
-    params = urllib.urlencode(params)
+    params = urlencode(params)
 
     url = endpoint + "/viperflow/deletephysicalport?%s" % params
 
@@ -117,7 +121,7 @@ def create_subnet(subnet_id, logicalnetwork, cidr, gateway, **kwargs):
 
     params.update(kwargs)
 
-    params = urllib.urlencode(params)
+    params = urlencode(params)
 
     url = endpoint + "/viperflow/createsubnet?%s" % params
 
@@ -132,7 +136,7 @@ def create_router(id,**kwargs):
 
     pararms.update(kwargs)
 
-    pararms = urllib.urlencode(pararms)
+    pararms = urlencode(pararms)
 
     url = endpoint + "/vrouterapi/createvirtualrouter?%s" % pararms
 
@@ -147,8 +151,7 @@ def add_router_interface(router,subnet, **kwargs):
 
     params.update(kwargs)
 
-
-    params = urllib.urlencode(params)
+    params = urlencode(params)
 
     url = endpoint + "/vrouterapi/addrouterinterface?%s" % params
 
@@ -163,8 +166,7 @@ def del_router_interface(router, subnet, **kwargs):
 
     params.update(kwargs)
 
-
-    params = urllib.urlencode(params)
+    params = urlencode(params)
 
     url = endpoint + "/vrouterapi/removerouterinterface?%s" % params
 

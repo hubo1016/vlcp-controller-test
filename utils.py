@@ -12,6 +12,7 @@ except Exception:
 
 logger = logging.getLogger(__name__)
 
+
 def init_environment(context, base_image):
 
     logger.info("init kvdb ..")
@@ -102,7 +103,7 @@ def create_docker(image):
 
     kvdb_id = subprocess.check_output(cmd, shell=True)
 
-    return kvdb_id.strip(b'\n')
+    return str_3_2(kvdb_id.strip(b'\n'))
 
 
 def remove_docker(image):
@@ -116,7 +117,7 @@ def get_docker_ip(docker):
 
     ip = subprocess.check_output(cmd, shell=True)
 
-    return ip.strip(b'\n')
+    return str_3_2(ip.strip(b'\n'))
 
 
 def init_docker_host(context, docker):
@@ -199,7 +200,7 @@ def init_docker_bridge(bridge):
 
 def call_in_docker(docker, cmd):
     c = "docker exec %s %s" % (docker, cmd)
-    return subprocess.check_output(c, shell=True)
+    return str_3_2(subprocess.check_output(c, shell=True))
 
 
 def add_host_vxlan_interface(docker, local_ip, remote_ip):
@@ -256,7 +257,7 @@ def link_docker_namespace(docker):
     # get docker pid
     cmd = "docker inspect --format={{.State.Pid}} %s" % docker
     pid = subprocess.check_output(cmd, shell=True)
-    pid = pid.strip(b'\n')
+    pid = str_3_2(pid.strip(b'\n'))
 
     # link docker namespace file
     cmd = "ln -sf /proc/%s/ns/net /var/run/netns/%s" % (pid, docker)
@@ -319,3 +320,12 @@ def get_flow_map(host):
     map = dict(msg['result'][0])
 
     return map
+
+
+def str_3_2(data):
+    # when python3 ip is b'' not ''
+    if isinstance(data, type(b'')) and not isinstance(data, type('')):
+        # run in python3
+        data = data.decode('utf-8')
+
+    return data
