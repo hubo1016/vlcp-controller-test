@@ -4,6 +4,7 @@ import re
 import logging
 import time
 import json
+import random
 
 try:
     from shlex import quote as shell_quote
@@ -148,6 +149,9 @@ def init_docker_host(context, docker):
 
         cmd = "sed -i 's~/opt/python~/opt/coverage run --rcfile=/opt/coverage.conf~g' %s" % "supervisord.conf"
         subprocess.check_call(cmd, shell=True)
+    else:
+        cmd = "sed -i 's~/opt/coverage run --rcfile=/opt/coverage.conf~/opt/python~g' %s" % "supervisord.conf"
+        subprocess.check_call(cmd, shell=True)
 
     # copy supervisor conf to host
     cmd = "docker cp %s %s:/etc" % ("supervisord.conf",docker)
@@ -220,6 +224,19 @@ def add_host_vlan_interface(bridge, docker):
     link_docker_namespace(bridge)
     link_docker_namespace(docker)
 
+    # init vlan host , we create link named bridge , to set it to ns
+    # when more instance , it mybe conflict error
+    time.sleep(random.randint(0,5))
+
+    # some case , link bridge will not destory auto to case next crate failed
+    # try delete it first
+    cmd = "ip link del bridge"
+    try:
+        subprocess.check_call(cmd,shell=True)
+    except Exception:
+        pass
+
+
     # create veth pair link bridge and docker
     cmd = "ip link add %s type veth peer name %s" % ("docker-"+docker[0:4], "bridge")
     subprocess.check_call(cmd, shell=True)
@@ -284,10 +301,34 @@ def restart_vlcp_controller(host):
     time.sleep(5)
 
 
+def copy_file_host_2_host(src_host, dst_host, src_file, dst_file):
+
+    #cmd = "mkdir %s" % tmp
+    #subprocess.check_call(cmd, shell=True)
+
+    # copy file to tmp in src_host
+    cmd = "bash -c 'cd /opt && mkdir tmp && cp report_file.* tmp'"
+    call_in_docker(src_host, cmd)
+
+    # copy file to local filesystem from docker
+    cmd = "docker cp %s:/opt/tmp ." % src_host
+    subprocess.check_call(cmd, shell=True)
+
+    # copy file to host from filesystem
+    cmd = "docker cp tmp %s:%s" % (dst_host, dst_file)
+    subprocess.check_call(cmd, shell=True)
+
+
+
 def collect_coverage_report(host, file):
 
     cmd = "mkdir /opt/coverage_report"
     call_in_docker(host, cmd)
+
+    # copy /opt/tmp/report_file to /opt that from other host
+    cmd = "bash -c 'cd /opt && cp tmp/* .'"
+    call_in_docker(host, cmd)
+
 
     cmd = "bash -c 'cd /opt && cp report_file.* coverage_report'"
     call_in_docker(host, cmd)

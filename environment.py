@@ -32,6 +32,10 @@ def after_all(context):
         # to collect all coverage report file , restart vlcp controller
         restart_vlcp_controller(context.host1)
         # collect coverage report
+
+        # copy report file from host2 to host1
+        copy_file_host_2_host(context.host2, context.host1, "/opt/report.*", "/opt")
+
         collect_coverage_report(context.host1, "coverage_report.tar.gz")
 
     uninit_environment(context)
