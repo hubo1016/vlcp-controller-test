@@ -5,7 +5,11 @@ python -V
 pip -V
 
 imagename=vlcp-controller/test
-tag=python27
+tag=$1
+
+if [ ${tag:0:7} == "python3" ]; then
+    tag="python3"
+fi
 
 [ "`docker images -q ${imagename}/${tag}`" == "" ] && (cd Dockerfile; docker build . -t ${imagename}:${tag} -f Dockerfile_${tag})
 

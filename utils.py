@@ -230,7 +230,7 @@ def add_host_vlan_interface(bridge, docker):
 
     # some case , link bridge will not destory auto to case next crate failed
     # try delete it first
-    cmd = "ip link del bridge"
+    cmd = "ip link del bridge 2>/dev/null 1>/dev/null"
     try:
         subprocess.check_call(cmd,shell=True)
     except Exception:
