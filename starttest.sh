@@ -7,6 +7,10 @@ pip -V
 imagename=vlcp-controller/test
 tag=$1
 
+if [ "${tag}" == "python2.7" ]; then
+    tag="python27"
+fi
+
 if [ "${tag:0:7}" == "python3" ]; then
     tag="python3"
 fi
