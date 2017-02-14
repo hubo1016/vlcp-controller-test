@@ -126,7 +126,7 @@ def init_docker_host(context, docker):
     # install ovs ; do in base image Dockerfile
 
     # start ovs server
-    cmd = "service openvswitch-switch start"
+    cmd = "/usr/local/share/openvswitch/scripts/ovs-ctl start --system-id=random"
     call_in_docker(docker, cmd)
 
     # copy wheel file
@@ -195,7 +195,7 @@ def clear_host_ns_env(context,host):
 def init_docker_bridge(bridge):
 
     # start ovs server
-    cmd = "service openvswitch-switch start"
+    cmd = "/usr/local/share/openvswitch/scripts/ovs-ctl start --system-id=random"
     call_in_docker(bridge, cmd)
 
     cmd = "ovs-vsctl add-br br0"

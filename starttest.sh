@@ -5,17 +5,23 @@ python -V
 pip -V
 
 imagename=vlcp-controller/test
+
 tag=$1
 
-if [ "${tag}" == "python2.7" ]; then
-    tag="python27"
+if [ "$tag" == "" ]; then
+    tag=python2.7
 fi
 
-if [ "${tag:0:7}" == "python3" ]; then
-    tag="python3"
+base=python:2.7
+
+if [ "${tag:0:6}" == "python" ]; then
+     base=python:${tag:6}
+elif [ "${tag}" == "pypy" ]; then
+     base=pypy:2-5
 fi
 
-[ "`docker images -q ${imagename}/${tag}`" == "" ] && (cd Dockerfile; docker build . -t ${imagename}:${tag} -f Dockerfile_${tag})
+
+[ "`docker images -q ${imagename}/${tag}`" == "" ] && (cd Dockerfile; python build-image.py ${base} -name ${imagename} -tag $tag)
 
 pip install -r requirements.txt
 
@@ -26,4 +32,5 @@ mkdir -p /var/run/netns
 modprobe openvswitch
 
 behave --junit -D tag=${tag}
+
 
