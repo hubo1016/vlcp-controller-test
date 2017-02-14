@@ -11,7 +11,7 @@ def create_vlan_physicalnetwork(context, network_id):
 
     c = create_physical_network(network_id)
 
-    command = 'python -c "%s"' % c
+    command = "curl -s '%s'" % c
 
     call_in_docker(context.host1, command)
 
@@ -22,7 +22,7 @@ def create_logicalnetwork(context,network_id, physicalnetwork):
 
     c = create_logical_network(network_id, physicalnetwork)
 
-    command = 'python -c "%s"' % c
+    command = "curl -s '%s'" % c
 
     call_in_docker(context.host1, command)
 
@@ -33,7 +33,7 @@ def create_logicalport(context, network_id, logicalnetwork, mac):
 
     c = create_logical_port(network_id, logicalnetwork, mac_address=mac)
 
-    command = 'python -c "%s"' % c
+    command = "curl -s '%s'" % c
 
     call_in_docker(context.host1, command)
 
@@ -43,7 +43,7 @@ def remove_logicalport(context, network_id):
 
     c = remove_logical_port(network_id)
 
-    command = 'python -c "%s"' % c
+    command = "curl -s '%s'" % c
 
     call_in_docker(context.host1, command)
 
@@ -235,6 +235,6 @@ def create_physicalport(context, name, physicalnetwork):
 
     c = create_physical_port(name, physicalnetwork)
 
-    command = 'python -c "%s"' % c
+    command = "curl -s '%s'" % c
 
     call_in_docker(context.host1, command)

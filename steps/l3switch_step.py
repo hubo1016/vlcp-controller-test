@@ -7,7 +7,7 @@ def add_subnet(context, subnet_id, logicalnetwork, cidr, gateway):
 
     c = create_subnet(subnet_id, logicalnetwork, cidr, gateway)
 
-    command = 'python -c "%s"' % c
+    command = "curl -s '%s'" % c
 
     call_in_docker(context.host1, command)
 
@@ -18,7 +18,7 @@ def create_l3_logicalport(context, logicalport_id, logicalnetwork, subnet, mac, 
     c = create_logical_port(id=logicalport_id, logicalnetwork=logicalnetwork, subnet=subnet,
                             mac_address=mac, ip_address=ip)
 
-    command = 'python -c "%s"' % c
+    command = "curl -s '%s'" % c
 
     call_in_docker(context.host1, command)
 
@@ -69,7 +69,7 @@ def add_router(context, routerid):
 
     c = create_router(id=routerid)
 
-    command = 'python -c "%s"' % c
+    command = "curl -s '%s'" % c
 
     call_in_docker(context.host1, command)
 
@@ -79,7 +79,7 @@ def create_router_interface(context, router, subnet):
 
     c = add_router_interface(router,subnet)
 
-    command = 'python -c "%s"' % c
+    command = "curl -s '%s'" % c
 
     call_in_docker(context.host1, command)
 
@@ -90,7 +90,7 @@ def remove_router_interface(context, router, subnet):
 
     c = del_router_interface(router,subnet)
 
-    command = 'python -c "%s"' % c
+    command = "curl -s '%s'" % c
 
     call_in_docker(context.host1, command)
 

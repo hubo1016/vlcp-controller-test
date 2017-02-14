@@ -7,7 +7,7 @@ from apis import *
 def create_vxlan_physicalnetwork(context, network_id):
     c = create_physical_network(network_id, type="vxlan")
 
-    command = 'python -c "%s"' % c
+    command = "curl -s '%s'" % c
 
     call_in_docker(context.host1, command)
 
@@ -16,7 +16,7 @@ def create_vxlan_physicalnetwork(context, network_id):
 def delete_physical_port(context, name):
     c = remove_physical_port(name)
 
-    command = 'python -c "%s"' % c
+    command = "curl -s '%s'" % c
 
     call_in_docker(context.host1, command)
 

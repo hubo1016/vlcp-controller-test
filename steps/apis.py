@@ -10,6 +10,7 @@ try:
 except Exception:
     from urllib.parse import urlencode
 
+
 def create_physical_network(id, type = "vlan",**kwargs):
 
     params = {"id":id, "type": type}
@@ -29,7 +30,7 @@ def create_physical_network(id, type = "vlan",**kwargs):
 
     command = "import urllib2; urllib2.urlopen('%s').read()" % url
 
-    return command
+    return url
 
 
 def create_logical_network(id, physicalnetwork, **kwargs):
@@ -46,7 +47,7 @@ def create_logical_network(id, physicalnetwork, **kwargs):
 
     command = "import urllib2; urllib2.urlopen('%s').read()" % url
 
-    return command
+    return url
 
 
 def create_logical_port(id, logicalnetwork, **kwargs):
@@ -63,7 +64,7 @@ def create_logical_port(id, logicalnetwork, **kwargs):
 
     command = "import urllib2; urllib2.urlopen('%s').read()" % url
 
-    return command
+    return url
 
 
 def remove_logical_port(id):
@@ -78,7 +79,7 @@ def remove_logical_port(id):
 
     command = "import urllib2; urllib2.urlopen('%s').read()" % url
 
-    return command
+    return url
 
 
 def create_physical_port(name, physicalnetwork, **kwargs):
@@ -95,7 +96,7 @@ def create_physical_port(name, physicalnetwork, **kwargs):
 
     command = "import urllib2; urllib2.urlopen('%s').read()" % url
 
-    return command
+    return url
 
 
 def remove_physical_port(name):
@@ -111,7 +112,7 @@ def remove_physical_port(name):
 
     command = "import urllib2; urllib2.urlopen('%s').read()" % url
 
-    return command
+    return url
 
 
 def create_subnet(subnet_id, logicalnetwork, cidr, gateway, **kwargs):
@@ -127,7 +128,7 @@ def create_subnet(subnet_id, logicalnetwork, cidr, gateway, **kwargs):
 
     command = "import urllib2; urllib2.urlopen('%s').read()" % url
 
-    return command
+    return url
 
 
 def create_router(id,**kwargs):
@@ -142,7 +143,7 @@ def create_router(id,**kwargs):
 
     command = "import urllib2; urllib2.urlopen('%s').read()" % url
 
-    return command
+    return url
 
 
 def add_router_interface(router,subnet, **kwargs):
@@ -157,7 +158,7 @@ def add_router_interface(router,subnet, **kwargs):
 
     command = "import urllib2; urllib2.urlopen('%s').read()" % url
 
-    return command
+    return url
 
 def del_router_interface(router, subnet, **kwargs):
 
@@ -172,7 +173,7 @@ def del_router_interface(router, subnet, **kwargs):
 
     command = "import urllib2; urllib2.urlopen('%s').read()" % url
 
-    return command
+    return url
 
 
 
