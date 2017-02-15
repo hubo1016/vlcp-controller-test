@@ -1,4 +1,5 @@
 import subprocess
+import argparse
 
 from jinja2 import Environment, FileSystemLoader
 
@@ -11,7 +12,7 @@ parser.add_argument("-tag", help="special docker images tag", default='python2.7
 
 args = parser.parse_args()
 
-print('base_python_version', args.base_python_version)
+print('base', args.base)
 print('ovs_version', args.ovs_version)
 print('imags name', args.name)
 print('image tag', args.tag)
@@ -23,7 +24,7 @@ env = Environment(loader=loader)
 template = env.get_template('Dockerfile')
 
 dockerfile_name = 'Dockerfile_' + args.tag
-template.stream(base=args.base_python_version, ovs_version=args.ovs_version).dump(dockerfile_name)
+template.stream(base=args.base, ovs_version=args.ovs_version).dump(dockerfile_name)
 
 build_cmd = "docker build . -t %s:%s -f %s" % (args.name, args.tag, dockerfile_name)
 
