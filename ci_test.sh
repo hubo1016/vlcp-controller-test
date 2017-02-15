@@ -2,7 +2,7 @@
 
 [ -f "/home/travis/virtualenv/${venv}/bin/activate" ] && source /home/travis/virtualenv/${venv}/bin/activate
 
-python -version
+python --version
 
 venv=python2.7
 
