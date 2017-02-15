@@ -21,7 +21,7 @@ elif [ "${tag}" == "pypy" ]; then
 fi
 
 
-[ "`docker images -q ${imagename}/${tag}`" == "" ] && (cd Dockerfile; python build-image.py ${base} -name ${imagename} -tag $tag)
+[ "`docker images -q ${imagename}:${tag}`" == "" ] && (cd Dockerfile; python build-image.py ${base} -name ${imagename} -tag $tag)
 
 pip install -r requirements.txt
 
