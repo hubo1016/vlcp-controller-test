@@ -17,7 +17,7 @@ base=python:2.7
 
 if [ "${tag:0:6}" == "python" ]; then
      base=python:${tag:6}
-elif [ "${tag}" == "pypy" ]; then
+elif [ "${tag}" == "pypy2" ]; then
      base=pypy:2-5
 fi
 
@@ -36,7 +36,7 @@ if [ "$coverage" == "" ]; then
     echo behave --junit -D tag=${tag}
     behave --junit -D tag=${tag}
 else
-    echo behave --junit -D tag=${tag} coverage=true
+    echo behave --junit -D tag=${tag} -D coverage=true
     behave --junit -D tag=${tag} -D coverage=true
 fi
 
