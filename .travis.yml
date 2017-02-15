@@ -2,7 +2,12 @@ language: python
 sudo: required
 python:
   - "2.7"
+  - "3.3"
+  - "3.4"
+  - "3.5"
+  - "3.6"
+  - "pypy"
 services:
   - docker
 # command to run tests
-script: sudo bash -xe starttest.sh python2.7
+script: sudo bash -xe ci_test.sh

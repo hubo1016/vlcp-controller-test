@@ -7,6 +7,7 @@ pip -V
 imagename=vlcp-controller/test
 
 tag=$1
+coverage=$2
 
 if [ "$tag" == "" ]; then
     tag=python2.7
@@ -31,6 +32,12 @@ mkdir -p /var/run/netns
 
 modprobe openvswitch
 
-behave --junit -D tag=${tag}
+if [ "$coverage" == "" ]; then
+    echo behave --junit -D tag=${tag}
+    behave --junit -D tag=${tag}
+else
+    echo behave --junit -D tag=${tag} coverage=true
+    behave --junit -D tag=${tag} -D coverage=true
+fi
 
 
