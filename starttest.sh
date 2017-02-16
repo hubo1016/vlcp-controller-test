@@ -17,7 +17,7 @@ base=python:2.7
 
 if [ "${tag:0:6}" == "python" ]; then
      base=python:${tag:6}
-elif [ "${tag}" == "pypy2" ]; then
+elif [ "${tag}" == "pypy" ]; then
      base=pypy:2-5
 fi
 
