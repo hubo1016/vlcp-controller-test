@@ -21,10 +21,9 @@ elif [ "${tag}" == "pypy2" ]; then
      base=pypy:2-5
 fi
 
+pip install -r requirements.txt
 
 [ "`docker images -q ${imagename}:${tag}`" == "" ] && (cd Dockerfile; python build-image.py ${base} -name ${imagename} -tag $tag)
-
-pip install -r requirements.txt
 
 [ -f vlcp*.whl ] || pip download --only-binary all --no-deps vlcp
 
