@@ -226,7 +226,7 @@ def add_host_vlan_interface(bridge, docker):
 
     # init vlan host , we create link named bridge , to set it to ns
     # when more instance , it mybe conflict error
-    time.sleep(random.randint(0,5))
+    time.sleep(random.randint(0,10))
 
     # some case , link bridge will not destory auto to case next crate failed
     # try delete it first
