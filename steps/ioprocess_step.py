@@ -55,6 +55,7 @@ def ovs_add_interface(context, vethname, ifaceid, host, mac):
     
     host_map = {"host1": context.host1, "host2": context.host2}
     if vethname == "bridge":
+        bridge_name = "bridge" + host_map[host][0:4]
         # bridge interface have been create , so only add it to ovs
         cmd = "ovs-vsctl add-port br0 %s" % vethname
         call_in_docker(host_map[host], cmd)
@@ -218,7 +219,11 @@ def check_two_port_ping(context, host1, name1, host2, name2):
 def ovs_remove_interface(context, vethname, host):
     host_map = {"host1": context.host1, "host2": context.host2}
 
-    cmd = "ovs-vsctl del-port %s" % vethname
+    if vethname == "bridge":
+        bridge_name = "bridge" + host_map[host][0:4]
+        cmd = "ovs-vsctl del-port %s" % bridge_name
+    else:
+        cmd = "ovs-vsctl del-port %s" % vethname
     
     call_in_docker(host_map[host], cmd)
     
