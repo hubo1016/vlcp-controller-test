@@ -226,26 +226,38 @@ def add_host_vlan_interface(bridge, docker):
 
     # init vlan host , we create link named bridge , to set it to ns
     # when more instance , it mybe conflict error
-    time.sleep(random.randint(0,10))
+    # time.sleep(random.randint(0,10))
 
-    # some case , link bridge will not destory auto to case next crate failed
-    # try delete it first
-    cmd = "ip link del bridge 2>/dev/null 1>/dev/null"
+    try_max = 10
+    while os.path.isfile('/tmp/vlcp_test') and try_max > 0:
+        time.sleep(2)
+        try_max -= 1
+
+    if try_max <= 0:
+        raise ValueError("no chance to create bridge link error")
+
+    os.mknod('/tmp/vlcp_test')
     try:
-        subprocess.check_call(cmd,shell=True)
-    except Exception:
-        pass
+        # some case , link bridge will not destory auto to case next crate failed
+        # try delete it first
+        cmd = "ip link del bridge 2>/dev/null 1>/dev/null"
+        try:
+            subprocess.check_call(cmd,shell=True)
+        except Exception:
+            pass
 
 
-    # create veth pair link bridge and docker
-    cmd = "ip link add %s type veth peer name %s" % ("docker-"+docker[0:4], "bridge")
-    subprocess.check_call(cmd, shell=True)
+        # create veth pair link bridge and docker
+        cmd = "ip link add %s type veth peer name %s" % ("docker-"+docker[0:4], "bridge")
+        subprocess.check_call(cmd, shell=True)
 
-    # add link to namespace
-    cmd = "ip link set %s netns %s" % ("bridge", docker)
-    subprocess.check_call(cmd, shell=True)
-    cmd = "ip link set %s netns %s" % ("docker-"+docker[0:4], bridge)
-    subprocess.check_call(cmd, shell=True)
+        # add link to namespace
+        cmd = "ip link set %s netns %s" % ("bridge", docker)
+        subprocess.check_call(cmd, shell=True)
+        cmd = "ip link set %s netns %s" % ("docker-"+docker[0:4], bridge)
+        subprocess.check_call(cmd, shell=True)
+    finally:
+        os.remove('/tmp/vlcp_test')
 
     cmd = "ip netns exec %s ip link set %s up" % (bridge, "docker-"+docker[0:4])
     subprocess.check_call(cmd, shell=True)
