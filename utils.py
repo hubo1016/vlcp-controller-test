@@ -228,12 +228,9 @@ def add_host_vlan_interface(bridge, docker):
     # when more instance , it mybe conflict error
     time.sleep(random.randint(0,10))
 
-    # use docker id to produce bridge name
-    bridge_name = "bridge" + docker[0:4]
-
     # some case , link bridge will not destory auto to case next crate failed
     # try delete it first
-    cmd = "ip link del %s 2>/dev/null 1>/dev/null" % bridge_name
+    cmd = "ip link del bridge 2>/dev/null 1>/dev/null"
     try:
         subprocess.check_call(cmd,shell=True)
     except Exception:
@@ -241,11 +238,11 @@ def add_host_vlan_interface(bridge, docker):
 
 
     # create veth pair link bridge and docker
-    cmd = "ip link add %s type veth peer name %s" % ("docker-"+docker[0:4], bridge_name)
+    cmd = "ip link add %s type veth peer name %s" % ("docker-"+docker[0:4], "bridge")
     subprocess.check_call(cmd, shell=True)
 
     # add link to namespace
-    cmd = "ip link set %s netns %s" % (bridge_name, docker)
+    cmd = "ip link set %s netns %s" % ("bridge", docker)
     subprocess.check_call(cmd, shell=True)
     cmd = "ip link set %s netns %s" % ("docker-"+docker[0:4], bridge)
     subprocess.check_call(cmd, shell=True)
@@ -253,10 +250,10 @@ def add_host_vlan_interface(bridge, docker):
     cmd = "ip netns exec %s ip link set %s up" % (bridge, "docker-"+docker[0:4])
     subprocess.check_call(cmd, shell=True)
 
-    cmd = "ip netns exec %s ip link set %s up" % (docker, bridge_name)
+    cmd = "ip netns exec %s ip link set %s up" % (docker, "bridge")
     subprocess.check_call(cmd, shell=True)
 
-    cmd = "ovs-vsctl add-port br0 %s" % bridge_name
+    cmd = "ovs-vsctl add-port br0 %s" % "bridge"
     call_in_docker(docker, cmd)
 
     cmd = "ovs-vsctl add-port br0 %s" % "docker-"+docker[0:4]
@@ -268,9 +265,7 @@ def add_host_vlan_interface(bridge, docker):
 
 def remove_host_vlan_interface(bridge, docker):
 
-    bridge_name = "bridge" + docker[0:4]
-
-    cmd = "ip link del %s" % bridge_name
+    cmd = "ip link del %s" % "bridge"
     call_in_docker(docker, cmd)
 
 
