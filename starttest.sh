@@ -32,11 +32,11 @@ mkdir -p /var/run/netns
 modprobe openvswitch
 
 if [ "$coverage" == "" ]; then
-    echo behave --junit -D tag=${tag}
-    behave --junit -D tag=${tag}
+    echo behave --junit -D tag=${tag} feature
+    behave --junit -D tag=${tag} feature
 else
-    echo behave --junit -D tag=${tag} -D coverage=true
-    behave --junit -D tag=${tag} -D coverage=true
+    echo behave --junit -D tag=${tag} -D coverage=true feature
+    behave --junit -D tag=${tag} -D coverage=true feature
 fi
 
 
