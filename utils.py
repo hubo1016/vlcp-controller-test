@@ -209,7 +209,7 @@ def call_in_docker(docker, cmd):
 
 def add_host_vxlan_interface(docker, local_ip, remote_ip):
     cmd = "ovs-vsctl add-port br0 vxlan0 -- set interface vxlan0 " \
-          "type=vxlan options:key=flow options:local_ip=%s options:remote_ip=%s" % (local_ip, remote_ip)
+          "type=vxlan options:key=flow options:local_ip=%s options:remote_ip=flow" % local_ip
 
     call_in_docker(docker, cmd)
 
@@ -226,7 +226,7 @@ def add_host_vlan_interface(bridge, docker):
 
     # init vlan host , we create link named bridge , to set it to ns
     # when more instance , it mybe conflict error
-    # time.sleep(random.randint(0,10))
+    time.sleep(random.randint(0,10))
 
     try_max = 10
     while os.path.isfile('/tmp/vlcp_test') and try_max > 0:
@@ -234,7 +234,7 @@ def add_host_vlan_interface(bridge, docker):
         try_max -= 1
 
     if try_max <= 0:
-        raise ValueError("no chance to create bridge link error")
+        raise ValueError("no chance to create bridge link errro")
 
     os.mknod('/tmp/vlcp_test')
     try:
