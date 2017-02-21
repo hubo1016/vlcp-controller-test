@@ -56,7 +56,8 @@ def ovs_add_interface(context, vethname, ifaceid, host, mac):
     host_map = {"host1": context.host1, "host2": context.host2}
     if vethname == "bridge":
         # bridge interface have been create , so only add it to ovs
-        cmd = "ovs-vsctl add-port br0 %s" % vethname
+        cmd = "ovs-vsctl add-port br0 %s -- set interface %s external_ids:vtep-physname=br0 " \
+              "external_ids:vtep-phyiname=%s" % (vethname,vethname,"docker-" + host_map[host][0:4])
         call_in_docker(host_map[host], cmd)
         return
     
@@ -238,3 +239,22 @@ def create_physicalport(context, name, physicalnetwork):
     command = "curl -s '%s'" % c
 
     call_in_docker(context.host1, command)
+
+
+@when('create special physicalport "{name}" on "{host}" "{physicalnetwork}"')
+def create_special_physicalport(context, name, host, physicalnetwork):
+
+    host_map = {"host1": context.host1, "host2": context.host2}
+
+    url = 'http://127.0.0.1:8081/ovsdbmanager/getsystemids'
+    cmd = 'curl -s "%s"' % url
+
+    result = call_in_docker(host_map[host], cmd)
+
+    msg = json.loads(result)
+    systemid= msg['result'][0]
+
+    c = create_physical_port(name, physicalnetwork, systemid=systemid)
+    command = "curl -s '%s'" % c
+
+    call_in_docker(host_map[host], command)

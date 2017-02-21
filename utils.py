@@ -70,6 +70,14 @@ def init_environment(context, base_image):
     add_host_vlan_interface(bridge, host1)
     add_host_vlan_interface(bridge, host2)
 
+    logger.info(" init vtep controller")
+    vtep1 = create_docker(base_image)
+    context.vtep1 = vtep1
+    init_docker_host(context, vtep1)
+
+    vtep2 = create_docker(base_image)
+    context.vtep2 = vtep2
+    init_docker_host(context, vtep2)
 
 def uninit_environment(context):
 
@@ -97,6 +105,12 @@ def uninit_environment(context):
         remove_host_vxlan_interface(context.host2)
         remove_docker(context.host2)
         # delattr(context, "host2")
+
+    if hasattr(context, "vtep1"):
+        remove_docker(context.vtep1)
+
+    if hasattr(context, "vtep2"):
+        remove_docker(context.vtep2)
 
 
 def create_docker(image):
@@ -265,7 +279,8 @@ def add_host_vlan_interface(bridge, docker):
     cmd = "ip netns exec %s ip link set %s up" % (docker, "bridge")
     subprocess.check_call(cmd, shell=True)
 
-    cmd = "ovs-vsctl add-port br0 %s" % "bridge"
+    cmd = "ovs-vsctl add-port br0 %s -- set interface %s external_ids:vtep-physname='br0' " \
+          "external_ids:vtep-phyiname=%s" % ("bridge","bridge","docker-"+docker[0:4])
     call_in_docker(docker, cmd)
 
     cmd = "ovs-vsctl add-port br0 %s" % "docker-"+docker[0:4]
@@ -331,6 +346,21 @@ def copy_file_host_2_host(src_host, dst_host, src_file, dst_file):
     subprocess.check_call(cmd, shell=True)
 
 
+def copy_report_file_to_local(src_host):
+
+    # copy file to tmp in src_host
+    cmd = "bash -c 'cd /opt && mkdir tmp && cp report_file.* tmp'"
+    call_in_docker(src_host, cmd)
+
+    # copy file to local filesystem from docker
+    cmd = "docker cp %s:/opt/tmp ." % src_host
+    subprocess.check_call(cmd, shell=True)
+
+def copy_report_file_to_host(dst_host, dst_file):
+    # copy file to host from filesystem
+    cmd = "docker cp tmp %s:%s" % (dst_host, dst_file)
+    subprocess.check_call(cmd, shell=True)
+
 
 def collect_coverage_report(host, file):
 
@@ -380,3 +410,40 @@ def str_3_2(data):
         data = data.decode('utf-8')
 
     return data
+
+
+def init_vtep_bridge(bridge):
+
+    # init vtep ovsdb
+    cmd = "ovsdb-tool create /usr/local/etc/openvswitch/vtep.db /usr/local/share/openvswitch/vtep.ovsschema"
+    call_in_docker(bridge, cmd)
+
+    cmd = "ovs-appctl -t ovsdb-server ovsdb-server/add-db /usr/local/etc/openvswitch/vtep.db"
+    call_in_docker(bridge, cmd)
+
+    # add ovsdb remote
+    cmd = "ovs-appctl -t ovsdb-server ovsdb-server/add-remote ptcp:6632"
+    call_in_docker(bridge, cmd)
+
+    # add physical switch
+    cmd = "vtep-ctl add-ps br0"
+
+    call_in_docker(bridge, cmd)
+
+    # add tunnel_ip
+    local_ip = get_docker_ip(bridge)
+    cmd = "vtep-ctl set Physical_Switch br0 tunnel_ips=%s" % (local_ip)
+    call_in_docker(bridge, cmd)
+
+    # start vtep
+    cmd = "bash -c 'PYTHONPATH=/usr/local/share/openvswitch/python /usr/local/share/openvswitch/scripts/ovs-vtep " \
+          "--log-file=/usr/local/var/log/openvswitch/ovs-vtep.log " \
+          "--pidfile=/usr/local/var/run/openvswitch/ovs-vtep.pid --detach br0'"
+    call_in_docker(bridge, cmd)
+
+
+def uninit_vtep_bridge(bridge):
+
+    cmd = "vtep-ctl del-ps br0"
+
+    call_in_docker(bridge, cmd)
