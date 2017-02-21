@@ -436,7 +436,8 @@ def init_vtep_bridge(bridge):
     call_in_docker(bridge, cmd)
 
     # start vtep
-    cmd = "bash -c 'PYTHONPATH=/usr/local/share/openvswitch/python /usr/local/share/openvswitch/scripts/ovs-vtep " \
+    cmd = "bash -c 'PYTHONPATH=/usr/local/share/openvswitch/python python2 " \
+          "/usr/local/share/openvswitch/scripts/ovs-vtep " \
           "--log-file=/usr/local/var/log/openvswitch/ovs-vtep.log " \
           "--pidfile=/usr/local/var/run/openvswitch/ovs-vtep.pid --detach br0'"
     call_in_docker(bridge, cmd)
