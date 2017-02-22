@@ -8,9 +8,14 @@ imagename=vlcp-controller/test
 
 tag=$1
 coverage=$2
+kvdb=$3
 
 if [ "$tag" == "" ]; then
     tag=python2.7
+fi
+
+if [ "$tag" == "" ]; then
+    kvdb=redis
 fi
 
 base=python:2.7
@@ -32,11 +37,11 @@ mkdir -p /var/run/netns
 modprobe openvswitch
 
 if [ "$coverage" == "" ]; then
-    echo behave --junit -D tag=${tag} feature
-    behave --junit -D tag=${tag} feature
+    echo behave --junit -D tag=${tag} -D db=${kvdb} feature
+    behave --junit -D tag=${tag} -D db=${kvdb} feature
 else
-    echo behave --junit -D tag=${tag} -D coverage=true feature
-    behave --junit -D tag=${tag} -D coverage=true feature
+    echo behave --junit -D tag=${tag} -D coverage=true -D db=${kvdb} feature
+    behave --junit -D tag=${tag} -D coverage=true -D db=${kvdb} feature
 fi
 
 
