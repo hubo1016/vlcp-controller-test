@@ -179,6 +179,6 @@ def prepare_vtep_template_config_file(context, feature, host):
         redis_db = "module.redisdb.url='tcp://%s/'" % kvdb_ip
         template.stream(vtepcontroller1=vtepcontroller1,
                         vtepcontroller2=vtepcontroller2,
-                        kvdb=redis_db).dump(config_name)
+                        redis_db=redis_db).dump(config_name)
 
     copy_file_to_host(config_name, host, "/etc/vlcp.conf")
