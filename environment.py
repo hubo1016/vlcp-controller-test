@@ -55,6 +55,9 @@ def before_feature(context, feature):
     try:
         # every feature , clear kvdb , clear environment
         cmd = "redis-cli FLUSHALL"
+        if 'db' in context.config.userdata:
+            if context.config.userdata['db'] == "zookeeper":
+                cmd = "bin/zkCli.sh rmr /vlcp"
         clear_kvdb(context, cmd)
 
         if hasattr(context, "host1"):
@@ -139,7 +142,15 @@ def prepare_vtep_controller_config_file(context, feature):
     bridge_ip = get_docker_ip(context.bridge)
     kvdb_ip = get_docker_ip(context.kvdb)
 
-    template.stream(bridge=bridge_ip, kvdb=kvdb_ip).dump(config_name)
+    if 'db' in context.config.userdata and context.config.userdata['db'] == "zookeeper":
+        zookeeper_db = "module.zookeeperdb.url='tcp://%s/'" % kvdb_ip
+        db_proxy = "proxy.kvstorage='vlcp.service.connection.zookeeperdb.ZooKeeperDB'"
+        proxy_notifier = "proxy.updatenotifier='vlcp.service.connection.zookeeperdb.ZooKeeperDB'"
+        template.stream(bridge=bridge_ip, zookeeper_db=zookeeper_db,
+                        db_proxy=db_proxy, proxy_notifier = proxy_notifier).dump(config_name)
+    else:
+        redis_db = "module.redisdb.url='tcp://%s/'" % kvdb_ip
+        template.stream(bridge=bridge_ip, redis_db=redis_db).dump(config_name)
 
     copy_file_to_host(config_name, context.vtep1, "/etc/vlcp.conf")
     copy_file_to_host(config_name, context.vtep2, "/etc/vlcp.conf")
@@ -158,8 +169,16 @@ def prepare_vtep_template_config_file(context, feature, host):
     vtepcontroller2 = get_docker_ip(context.vtep2)
     kvdb_ip = get_docker_ip(context.kvdb)
 
-    template.stream(vtepcontroller1=vtepcontroller1,
-                    vtepcontroller2=vtepcontroller2,
-                    kvdb=kvdb_ip).dump(config_name)
+    if 'db' in context.config.userdata and context.config.userdata['db'] == "zookeeper":
+        zookeeper_db = "module.zookeeperdb.url='tcp://%s/'" % kvdb_ip
+        db_proxy = "proxy.kvstorage='vlcp.service.connection.zookeeperdb.ZooKeeperDB'"
+        proxy_notifier = "proxy.updatenotifier='vlcp.service.connection.zookeeperdb.ZooKeeperDB'"
+        template.stream(vtepcontroller1=vtepcontroller1,vtepcontroller2=vtepcontroller2, zookeeper_db=zookeeper_db,
+                        db_proxy=db_proxy, proxy_notifier = proxy_notifier).dump(config_name)
+    else:
+        redis_db = "module.redisdb.url='tcp://%s/'" % kvdb_ip
+        template.stream(vtepcontroller1=vtepcontroller1,
+                        vtepcontroller2=vtepcontroller2,
+                        kvdb=redis_db).dump(config_name)
 
     copy_file_to_host(config_name, host, "/etc/vlcp.conf")

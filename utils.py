@@ -18,7 +18,14 @@ def init_environment(context, base_image):
 
     logger.info("init kvdb ..")
     # 1. create redis kvdb
-    kvdb_docker = create_docker("redis")
+
+    db_image = "redis"
+    if 'db' in context.config.userdata:
+        db = context.config.userdata['db']
+        if db == 'zookeeper':
+            db = "jplock/zookeeper"
+
+    kvdb_docker = create_docker(db)
 
     # store docker instance id to context
     context.kvdb = kvdb_docker
@@ -28,13 +35,32 @@ def init_environment(context, base_image):
 
     config_path = os.getcwd() + "/config"
     kvdb_url_format = re.compile(r'(module.redisdb.url=*)')
+    kvdb_url_format2 = re.compile(r'(module.zookeeperdb.url=*)')
+    kvdb_url_format3 = re.compile(r'(proxy.kvstorage=*)')
+    kvdb_url_format4 = re.compile(r'(proxy.updatenotifier=)')
     for file in os.listdir(config_path):
         if file.endswith(".conf"):
             # config file is so small, so read all .. write all
             with open(config_path + "/" + file) as f:
-                lines = [line for line in f.readlines() if not kvdb_url_format.match(line)]
-                url = "module.redisdb.url='http://%s'" % str(kvdb_ip_address)
-                lines.append(url)
+                lines = [line for line in f.readlines() if not kvdb_url_format.match(line)
+                         and not kvdb_url_format2.match(line)
+                         and not kvdb_url_format3.match(line)
+                         and not kvdb_url_format4.match(line)]
+                if 'db' in context.config.userdata and context.config.userdata['db'] == "zookeeper":
+                    url = "module.zookeeperdb.url='tcp://%s:2181'" % str(kvdb_ip_address)
+                    lines.append(url)
+                    lines.append('\n')
+
+                    proxy = "proxy.kvstorage='vlcp.service.connection.zookeeperdb.ZooKeeperDB'"
+                    lines.append(proxy)
+                    lines.append('\n')
+
+                    proxy_notify = "proxy.updatenotifier='vlcp.service.connection.zookeeperdb.ZooKeeperDB'"
+                    lines.append(proxy_notify)
+
+                else:
+                    url = "module.redisdb.url='tcp://%s'" % str(kvdb_ip_address)
+                    lines.append(url)
 
             with open(config_path + "/" + file, "w") as f:
                 f.truncate()

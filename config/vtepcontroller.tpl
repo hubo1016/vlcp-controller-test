@@ -32,4 +32,7 @@ server.startup = (
                   'vlcp.service.sdn.vtepcontroller.VtepController'
                   )
 
-module.redisdb.url='tcp://{{kvdb}}/'
+{{redis_db}}
+{{zookeeper_db}}
+{{db_proxy}}
+{{proxy_notifier}}

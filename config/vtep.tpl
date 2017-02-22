@@ -44,4 +44,7 @@ server.startup = ('vlcp.service.sdn.viperflow.ViperFlow',
                   #'vlcp_docker.dockerplugin.DockerPlugin'
                   )
 
-module.redisdb.url='tcp://{{kvdb}}/'
+{{redis_db}}
+{{zookeeper_db}}
+{{db_proxy}}
+{{proxy_notifier}}
