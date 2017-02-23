@@ -374,7 +374,7 @@ def list_vtep_bridge(**kwargs):
     return url
 
 
-def list_vtep_controller_bridge_interface(**kwargs):
+def list_vtep_bridge_interface(**kwargs):
     params = {}
     params.update(kwargs)
 
