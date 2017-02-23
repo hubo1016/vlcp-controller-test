@@ -88,6 +88,13 @@ def create_router_interface(context, router, subnet):
 @then('remove router interface "{router}" "{subnet}"')
 def remove_router_interface(context, router, subnet):
 
+    c = list_router_interface()
+    command = "curl -s '%s'" % c
+    result = call_in_docker(context.host1, command)
+    msg = json.loads(result)
+
+    assert len(msg['result']) >= 1
+
     c = del_router_interface(router,subnet)
 
     command = "curl -s '%s'" % c
@@ -414,3 +421,19 @@ def remove_special_physicalnetwork(context, id):
     msg = json.loads(result)
 
     assert 'status' in msg['result'] and msg['result']['status'] == 'OK'
+
+
+@then('remvoe router "{id}"')
+def remove_special_router(id):
+
+    c = remove_virtual_router(id = id)
+
+    command = "curl -s '%s'" % c
+
+    result = call_in_docker(context.host1, command)
+
+    msg = json.loads(result)
+
+    assert 'status' in msg['result'] and msg['result']['status'] == 'OK'
+
+

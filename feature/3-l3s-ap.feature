@@ -55,6 +55,7 @@ Feature: l3switch arp prepush
         and remove router interface "c707aa9c" "236fae62"
         and remove subnet "31ce5574"
         and remove subnet "236fae62"
+        and remvoe router "c707aa9c"
         and remove logicalnetwork "1fd3954a"
         and remove logicalnetwork "27807868"
         and delete physicalport "vxlan0"

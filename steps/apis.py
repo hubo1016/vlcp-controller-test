@@ -311,6 +311,17 @@ def list_router(**kwargs):
 
     return url
 
+def remove_virtual_router(id):
+
+    params = {"id":id}
+
+    params = urlencode(params)
+
+    url = endpoint + "/vrouterapi/deletevirtualrouter?%s" % params
+
+    return url
+
+
 def add_router_interface(router,subnet, **kwargs):
 
     params = {"router":router, "subnet": subnet}
@@ -340,6 +351,19 @@ def del_router_interface(router, subnet, **kwargs):
 
     return url
 
+
+def list_router_interface(**kwargs):
+
+    params = {}
+    params.update(kwargs)
+
+    params = urlencode(params)
+
+    url = endpoint + "/vrouterapi/listrouterinterfaces?%s" % params
+
+    command = "import urllib2; urllib2.urlopen('%s').read()" % url
+
+    return url
 
 
 def check_flow_table(host, cmd):
