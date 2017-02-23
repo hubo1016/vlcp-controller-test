@@ -56,6 +56,17 @@ def list_physical_network(**kwargs):
     return url
 
 
+def remove_physical_network(id):
+
+    params = {'id':id}
+
+    params = urlencode(params)
+
+    url = endpoint + "/viperflow/deletephysicalnetwork?%s" % params
+
+    return url
+
+
 def create_logical_network(id, physicalnetwork, **kwargs):
 
     params = {"id":id, "physicalnetwork":physicalnetwork}
@@ -92,6 +103,16 @@ def list_logical_network(**kwargs):
     params = urlencode(params)
 
     url = endpoint + "/viperflow/listlogicalnetworks?%s" % params
+
+    return url
+
+def remove_logical_network(id):
+
+    params = {"id":id}
+
+    params = urlencode(params)
+
+    url = endpoint + "/viperflow/deletelogicalnetwork?%s" % params
 
     return url
 
@@ -165,6 +186,29 @@ def create_physical_port(name, physicalnetwork, **kwargs):
 
     return url
 
+def update_physical_port(name,**kwargs):
+
+    params = {"name":name}
+    params.update(kwargs)
+
+    params = urlencode(params)
+
+    url = endpoint + "/viperflow/updatephysicalport?%s" % params
+
+    return url
+
+
+def list_physical_port(**kwargs):
+
+    params = {}
+    params.update(kwargs)
+
+    params = urlencode(params)
+
+    url = endpoint + "/viperflow/listphysicalports?%s" % params
+
+    return url
+
 
 def remove_physical_port(name):
 
@@ -210,12 +254,22 @@ def update_subnet(id, **kwargs):
 
 
 def list_subnet(**kwargs):
-    params = {"id":id}
+    params = {}
     params.update(kwargs)
 
     params = urlencode(params)
 
     url = endpoint + "/viperflow/listsubnets?%s" % params
+
+    return url
+
+def remove_subnet(id):
+
+    params = {"id":id}
+
+    params = urlencode(params)
+
+    url = endpoint + "/viperflow/deletesubnet?%s" % params
 
     return url
 
@@ -248,7 +302,7 @@ def update_router_network(id, **kwargs):
 
 def list_router(**kwargs):
 
-    params = {"id":id}
+    params = {}
     params.update(kwargs)
 
     params = urlencode(params)

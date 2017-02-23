@@ -13,6 +13,7 @@ def create_vxlan_physicalnetwork(context, network_id):
 
 
 @Given ('delete physicalport "{name}"')
+@then ('delete physicalport "{name}"')
 def delete_physical_port(context, name):
     c = remove_physical_port(name)
 

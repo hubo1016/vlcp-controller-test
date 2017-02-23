@@ -212,6 +212,16 @@ def update_physicalnetwork_name(context, id, name):
     call_in_docker(context.host1, command)
 
 
+@given('update physicalport "{name}" test "{attr}"')
+def update_physical_port_attr(context, name, attr):
+
+    c = update_physical_port(name=name , test=attr)
+
+    command = "curl -s '%s'" % c
+
+    call_in_docker(context.host1, command)
+
+
 @given('update subnet name "{id}" "{name}"')
 def update_subnet_name(context, id, name):
 
@@ -245,6 +255,13 @@ def update_router_name(context, id, name):
 @then('check logicalport name "{id}" "{name}"')
 def check_logical_port_name(context, id, name):
 
+    c = list_logical_port()
+    command = "curl -s '%s'" % c
+    result = call_in_docker(context.host1, command)
+    msg = json.loads(result)
+
+    assert len(msg['result']) >= 1
+
     c = list_logical_port(id=id)
 
     command = "curl -s '%s'" % c
@@ -257,6 +274,13 @@ def check_logical_port_name(context, id, name):
 
 @then('check logicalnetwork name "{id}" "{name}"')
 def check_logical_network_name(context, id, name):
+
+    c = list_logical_network()
+    command = "curl -s '%s'" % c
+    result = call_in_docker(context.host1, command)
+    msg = json.loads(result)
+
+    assert len(msg['result']) >= 1
 
     c = list_logical_network(id=id)
 
@@ -272,6 +296,13 @@ def check_logical_network_name(context, id, name):
 @then('check physicalnetwork name "{id}" "{name}"')
 def check_physical_network_name(context, id, name):
 
+    c = list_physical_network()
+    command = "curl -s '%s'" % c
+    result = call_in_docker(context.host1, command)
+    msg = json.loads(result)
+
+    assert len(msg['result']) >= 1
+
     c = list_physical_network(id=id)
 
     command = "curl -s '%s'" % c
@@ -282,9 +313,36 @@ def check_physical_network_name(context, id, name):
 
     assert 'name' in msg['result'][0] and msg['result'][0]['name'] == name
 
+@then('check physicalport "{name}" test "{attr}"')
+def check_physical_port_attr(context, name, attr):
+
+    c = list_physical_port()
+    command = "curl -s '%s'" % c
+    result = call_in_docker(context.host1, command)
+    msg = json.loads(result)
+
+    assert len(msg['result']) >= 1
+
+    c = list_physical_port(name=name)
+
+    command = "curl -s '%s'" % c
+
+    result = call_in_docker(context.host1, command)
+
+    msg = json.loads(result)
+
+    assert 'test' in msg['result'][0] and msg['result'][0]['test'] == attr
+
 
 @then('check subnet name "{id}" "{name}"')
 def check_subnet_name(context, id, name):
+
+    c = list_subnet()
+    command = "curl -s '%s'" % c
+    result = call_in_docker(context.host1, command)
+    msg = json.loads(result)
+
+    assert len(msg['result']) >= 1
 
     c = list_subnet(id=id)
 
@@ -300,6 +358,13 @@ def check_subnet_name(context, id, name):
 @then('check router name "{id}" "{name}"')
 def check_router_name(context, id, name):
 
+    c = list_router()
+    command = "curl -s '%s'" % c
+    result = call_in_docker(context.host1, command)
+    msg = json.loads(result)
+
+    assert len(msg['result']) >= 1
+
     c = list_router(id=id)
 
     command = "curl -s '%s'" % c
@@ -309,3 +374,43 @@ def check_router_name(context, id, name):
     msg = json.loads(result)
 
     assert 'name' in msg['result'][0] and msg['result'][0]['name'] == name
+
+
+@then('remove subnet "{id}"')
+def remove_special_subnet(context, id):
+
+    c = remove_subnet(id=id)
+    command = "curl -s '%s'" % c
+
+    result = call_in_docker(context.host1, command)
+
+    msg = json.loads(result)
+
+    assert 'status' in msg['result'] and msg['result']['status'] == 'OK'
+
+
+
+@then('remove logicalnetwork "{id}"')
+def remove_special_logicalnetwork(context, id):
+
+    c = remove_logical_network(id=id)
+    command = "curl -s '%s'" % c
+
+    result = call_in_docker(context.host1, command)
+
+    msg = json.loads(result)
+
+    assert 'status' in msg['result'] and msg['result']['status'] == 'OK'
+
+
+@then('remove physicalnetwork "{id}"')
+def remove_special_physicalnetwork(context, id):
+
+    c = remove_physical_network(id=id)
+    command = "curl -s '%s'" % c
+
+    result = call_in_docker(context.host1, command)
+
+    msg = json.loads(result)
+
+    assert 'status' in msg['result'] and msg['result']['status'] == 'OK'
