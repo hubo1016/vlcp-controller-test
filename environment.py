@@ -119,6 +119,7 @@ def prepare_config_file(context, feature):
         "l3switch arp prepush" : "l3switch.conf",
         "l3switch arp learn" : "l3switch1.conf",
         "l3switch external network" : "l3switch2.conf",
+        "dhcp client" : "dhcp.conf",
         "ioprocessing vxlan vtep" : "ioprocess.conf"
     }
 

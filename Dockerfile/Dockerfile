@@ -7,6 +7,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
                               curl \
                               iproute2 \
                               iputils-ping \
+                              isc-dhcp-client \
                    && rm -rf /var/lib/apt/lists/*
 
 
