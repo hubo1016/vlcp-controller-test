@@ -108,4 +108,20 @@ def check_vxlan_learn(context, mac, host):
 
     assert int(result) >= 1
 
+@then('vtepcontroller list vtep bridge')
+def list_vtep_controller_bridge(context):
 
+    c = list_vtep_bridge()
+
+    command = "curl -s '%s'" % c
+
+    call_in_docker(context.vtep1, command)
+
+@then('vtepcontroller list vtep bridge interface')
+def list_vtep_controller_bridge_interface(context):
+
+    c = list_vtep_bridge_interface()
+
+    command = "curl -s '%s'" % c
+
+    call_in_docker(context.vtep1, command)

@@ -88,7 +88,7 @@ def create_router_interface(context, router, subnet):
 @then('remove router interface "{router}" "{subnet}"')
 def remove_router_interface(context, router, subnet):
 
-    c = list_router_interface()
+    c = list_router_interface(id=router)
     command = "curl -s '%s'" % c
     result = call_in_docker(context.host1, command)
     msg = json.loads(result)

@@ -10,3 +10,9 @@ Feature: ioprocessing vxlan vtep
         when create physicalport "vxlan0" "edac6346"
         and create special physicalport "bridge" on "host1" "edac6346"
         then check two logicalport ping "host1" "veth1" "host2" "veth1"
+        and remove logicalport "d13f31a2"
+        and remove logicalport "963008a6"
+
+    Scenario: test vtep controller api
+        then vtepcontroller list vtep bridge
+        and vtepcontroller list vtep bridge interface

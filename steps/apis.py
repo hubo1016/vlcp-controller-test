@@ -336,8 +336,8 @@ def add_router_interface(router,subnet, **kwargs):
 
     return url
 
-def del_router_interface(router, subnet, **kwargs):
 
+def del_router_interface(router, subnet, **kwargs):
 
     params = {"router":router, "subnet": subnet}
 
@@ -352,16 +352,34 @@ def del_router_interface(router, subnet, **kwargs):
     return url
 
 
-def list_router_interface(**kwargs):
+def list_router_interface(id):
 
-    params = {}
-    params.update(kwargs)
-
+    params = {"id":id}
     params = urlencode(params)
 
     url = endpoint + "/vrouterapi/listrouterinterfaces?%s" % params
 
     command = "import urllib2; urllib2.urlopen('%s').read()" % url
+
+    return url
+
+def list_vtep_bridge(**kwargs):
+
+    params = {}
+    params.update(kwargs)
+
+    params = urlencode(params)
+    url = endpoint + "/vtepcontroller/listphysicalswitches?%s" % params
+
+    return url
+
+
+def list_vtep_controller_bridge_interface(**kwargs):
+    params = {}
+    params.update(kwargs)
+
+    params = urlencode(params)
+    url = endpoint + "/vtepcontroller/listphysicalports?%s" % params
 
     return url
 
