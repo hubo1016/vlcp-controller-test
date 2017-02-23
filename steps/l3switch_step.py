@@ -182,3 +182,130 @@ def check_l3_ping_fail(context, host1, name1, ip1, host2, name2, ip2):
         raise AssertionError
 
 
+@given('update logicalport name "{id}" "{name}"')
+def update_logicalport_name(context, id, name):
+
+    c = update_logical_port(id=id, name = name)
+
+    command = "curl -s '%s'" % c
+
+    call_in_docker(context.host1, command)
+
+
+@given('update logicalnetwork name "{id}" "{name}"')
+def update_logicalnet_name(context, id, name):
+
+    c = update_logical_network(id=id, name = name)
+
+    command = "curl -s '%s'" % c
+
+    call_in_docker(context.host1, command)
+
+
+@given('update physicalnetwork name "{id}" "{name}"')
+def update_physicalnetwork_name(context, id, name):
+
+    c = update_physicalnetwork_network(id=id, name = name)
+
+    command = "curl -s '%s'" % c
+
+    call_in_docker(context.host1, command)
+
+
+@given('update subnet name "{id}" "{name}"')
+def update_subnet_name(context, id, name):
+
+    c = update_subnet(id=id, name = name)
+
+    command = "curl -s '%s'" % c
+
+    call_in_docker(context.host1, command)
+
+
+@given('update subnet gateway "{id}" "{gateway}"')
+def update_subnet_gateway(context, id, gateway):
+
+    c = update_subnet(id=id, gateway = gateway)
+
+    command = "curl -s '%s'" % c
+
+    call_in_docker(context.host1, command)
+
+
+@given('update router name "{id}" "{name}"')
+def update_router_name(context, id, name):
+
+    c = update_router_network(id=id, name = name)
+
+    command = "curl -s '%s'" % c
+
+    call_in_docker(context.host1, command)
+
+
+@then('check logicalport name "{id}" "{name}"')
+def check_logical_port_name(context, id, name):
+
+    c = list_logical_port(id=id)
+
+    command = "curl -s '%s'" % c
+
+    result = call_in_docker(context.host1, command)
+
+    msg = json.loads(result)
+
+    assert 'name' in msg['result'][0] and msg['result'][0]['name'] == name
+
+@then('check logicalnetwork name "{id}" "{name}"')
+def check_logical_network_name(context, id, name):
+
+    c = list_logical_network(id=id)
+
+    command = "curl -s '%s'" % c
+
+    result = call_in_docker(context.host1, command)
+
+    msg = json.loads(result)
+
+    assert 'name' in msg['result'][0] and msg['result'][0]['name'] == name
+
+
+@then('check physicalnetwork name "{id}" "{name}"')
+def check_physical_network_name(context, id, name):
+
+    c = list_physical_network(id=id)
+
+    command = "curl -s '%s'" % c
+
+    result = call_in_docker(context.host1, command)
+
+    msg = json.loads(result)
+
+    assert 'name' in msg['result'][0] and msg['result'][0]['name'] == name
+
+
+@then('check subnet name "{id}" "{name}"')
+def check_subnet_name(context, id, name):
+
+    c = list_subnet(id=id)
+
+    command = "curl -s '%s'" % c
+
+    result = call_in_docker(context.host1, command)
+
+    msg = json.loads(result)
+
+    assert 'name' in msg['result'][0] and msg['result'][0]['name'] == name
+
+
+@then('check router name "{id}" "{name}"')
+def check_router_name(context, id, name):
+
+    c = list_router(id=id)
+
+    command = "curl -s '%s'" % c
+
+    result = call_in_docker(context.host1, command)
+
+    msg = json.loads(result)
+
+    assert 'name' in msg['result'][0] and msg['result'][0]['name'] == name

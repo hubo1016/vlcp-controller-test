@@ -31,3 +31,17 @@ Feature: l3switch arp prepush
         then check l3 prepush "be:cf:72:24:77:b0" "172.100.102.2" on "host1"
         and check l3 prepush "76:b8:46:68:eb:ac" "172.100.101.2" on "host2"
         and check l3 logicalport ping "host1" "veth1" "172.100.101.2" "host2" "veth1" "172.100.102.2" success
+
+    Scenario: api update test
+        Given update logicalport name "d13f31a2" "test_logicalport"
+        and update logicalnetwork name "1fd3954a" "test_logicalnetwork"
+        and update physicalnetwork name "edac6346" "test_physicalnetwork"
+        and update subnet name "236fae62" "test_physicalnetwork"
+        and update router name "c707aa9c" "test_router"
+        and update subnet gateway "236fae62" "172.100.101.254"
+        then check logicalport name "d13f31a2" "test_logicalport"
+        and check logicalnetwork name "1fd3954a" "test_logicalnetwork"
+        and check physicalnetwork name "edac6346" "test_physicalnetwork"
+        and check subnet name "236fae62" "test_physicalnetwork"
+        and check router name "c707aa9c" "test_router"
+        and check l3 logicalport ping "host1" "veth1" "172.100.101.2" "host2" "veth1" "172.100.102.2" success

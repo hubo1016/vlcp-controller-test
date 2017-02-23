@@ -32,6 +32,29 @@ def create_physical_network(id, type = "vlan",**kwargs):
 
     return url
 
+def update_physicalnetwork_network(id, **kwargs):
+
+    params = {"id":id}
+    params.update(kwargs)
+
+    params = urlencode(params)
+
+    url = endpoint + "/viperflow/updatephysicalnetwork?%s" % params
+
+    return url
+
+
+def list_physical_network(**kwargs):
+
+    params = {}
+    params.update(kwargs)
+
+    params = urlencode(params)
+
+    url = endpoint + "/viperflow/listphysicalnetworks?%s" % params
+
+    return url
+
 
 def create_logical_network(id, physicalnetwork, **kwargs):
 
@@ -49,6 +72,28 @@ def create_logical_network(id, physicalnetwork, **kwargs):
 
     return url
 
+def update_logical_network(id, **kwargs):
+
+    params = {"id":id}
+    params.update(kwargs)
+
+    params = urlencode(params)
+
+    url = endpoint + "/viperflow/updatelogicalnetwork?%s" % params
+
+    return url
+
+
+def list_logical_network(**kwargs):
+
+    params = {}
+    params.update(kwargs)
+
+    params = urlencode(params)
+
+    url = endpoint + "/viperflow/listlogicalnetworks?%s" % params
+
+    return url
 
 def create_logical_port(id, logicalnetwork, **kwargs):
 
@@ -78,6 +123,28 @@ def remove_logical_port(id):
     #f = urllib2.urlopen(url).read()
 
     command = "import urllib2; urllib2.urlopen('%s').read()" % url
+
+    return url
+
+def update_logical_port(id, **kwargs):
+
+    params = {"id":id}
+    params.update(kwargs)
+
+    params = urlencode(params)
+
+    url = endpoint + "/viperflow/updatelogicalport?%s" % params
+
+    return url
+
+def list_logical_port(**kwargs):
+
+    params = {}
+    params.update(kwargs)
+
+    params = urlencode(params)
+
+    url = endpoint + "/viperflow/listlogicalports?%s" % params
 
     return url
 
@@ -130,6 +197,28 @@ def create_subnet(subnet_id, logicalnetwork, cidr, gateway, **kwargs):
 
     return url
 
+def update_subnet(id, **kwargs):
+
+    params = {"id":id}
+    params.update(kwargs)
+
+    params = urlencode(params)
+
+    url = endpoint + "/viperflow/updatesubnet?%s" % params
+
+    return url
+
+
+def list_subnet(**kwargs):
+    params = {"id":id}
+    params.update(kwargs)
+
+    params = urlencode(params)
+
+    url = endpoint + "/viperflow/listsubnets?%s" % params
+
+    return url
+
 
 def create_router(id,**kwargs):
 
@@ -145,6 +234,28 @@ def create_router(id,**kwargs):
 
     return url
 
+def update_router_network(id, **kwargs):
+
+    params = {"id":id}
+    params.update(kwargs)
+
+    params = urlencode(params)
+
+    url = endpoint + "/vrouterapi/updatevirtualrouter?%s" % params
+
+    return url
+
+
+def list_router(**kwargs):
+
+    params = {"id":id}
+    params.update(kwargs)
+
+    params = urlencode(params)
+
+    url = endpoint + "/vrouterapi/listvirtualrouters?%s" % params
+
+    return url
 
 def add_router_interface(router,subnet, **kwargs):
 
