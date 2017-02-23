@@ -424,7 +424,7 @@ def remove_special_physicalnetwork(context, id):
 
 
 @then('remvoe router "{id}"')
-def remove_special_router(id):
+def remove_special_router(context, id):
 
     c = remove_virtual_router(id = id)
 
