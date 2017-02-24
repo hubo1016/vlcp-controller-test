@@ -2,6 +2,7 @@ from behave import *
 from utils import *
 
 
+@given('dhcp get ip "{host}" "{vethname}"')
 @when('dhcp get ip "{host}" "{vethname}"')
 def dhcp(context, host, vethname):
     host_map = {"host1": context.host1, "host2": context.host2}
@@ -15,6 +16,7 @@ def dhcp(context, host, vethname):
     call_in_docker(host_map[host], cmd)
 
 
+@given('check get ip "{host}" "{vethname}" "{ip}"')
 @then('check get ip "{host}" "{vethname}" "{ip}"')
 def check_ip(context, host, vethname, ip):
 

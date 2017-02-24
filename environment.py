@@ -104,6 +104,10 @@ def after_feature(context, feature):
     if feature.name in ["ioprocessing vxlan vtep"]:
         uninit_vtep_bridge(context.bridge)
 
+        # bridge ovs will discard all flow, restart it to install normal flow
+        cmd = "/usr/local/share/openvswitch/scripts/ovs-ctl restart --system-id=random"
+        call_in_docker(context.bridge, cmd)
+
 
 def prepare_config_file(context, feature):
     # every feature mybe have different config

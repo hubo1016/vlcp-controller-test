@@ -11,6 +11,15 @@ def add_subnet(context, subnet_id, logicalnetwork, cidr, gateway):
 
     call_in_docker(context.host1, command)
 
+@given('create external subnet "{subnet_id}","{logicalnetwork}","{cidr}" "{gateway}"')
+def add_subnet(context, subnet_id, logicalnetwork, cidr, gateway):
+
+    c = create_subnet(subnet_id, logicalnetwork, cidr, gateway, isexternal="`True`")
+
+    command = "curl -s '%s'" % c
+
+    call_in_docker(context.host1, command)
+
 
 @given('create l3 logicalport "{logicalport_id}" "{logicalnetwork}" "{subnet}" "{mac}" "{ip}"')
 def create_l3_logicalport(context, logicalport_id, logicalnetwork, subnet, mac, ip):
@@ -64,6 +73,7 @@ def ovs_add_l3_interface(context, vethname, ifaceid, host, mac, ip, gateway):
     call_in_docker(host_map[host], cmd)
 
 
+@given('create router "{routerid}"')
 @when('create router "{routerid}"')
 def add_router(context, routerid):
 
@@ -437,3 +447,63 @@ def remove_special_router(context, id):
     assert 'status' in msg['result'] and msg['result']['status'] == 'OK'
 
 
+@given('config bridge as external {network} gateway {gateway}')
+def config_bridge_as_external_gateway(context, network, gateway):
+
+    # get external_ip
+
+    url = 'http://127.0.0.1:8081/ovsdbmanager/getsystemids'
+    cmd = 'curl -s "%s"' % url
+
+    result = call_in_docker(context.host1, cmd)
+
+    msg = json.loads(result)
+    systemid= msg['result'][0]
+
+    url = 'http://127.0.0.1:8081/objectdb/getonce?key=viperflow.dvrouterexternaladdressinfo'
+    command = "curl -s '%s'" % url
+
+    result = call_in_docker(context.host1, command)
+
+    msg = json.loads(result)
+    assert 'info' in msg['result']
+
+    assert systemid in [v[0] for v in msg['result']['info']]
+    e = [ v for v in msg['result']['info'] if v[0] == systemid]
+    external_ip = e[0][4]
+
+    # init gateway interface on bridge
+    cmd = "ovs-vsctl add-port br0 exn tag=100 -- set interface exn type=internal"
+    call_in_docker(context.bridge, cmd)
+
+    cmd = "ip link set exn up"
+    call_in_docker(context.bridge, cmd)
+
+    cmd = "ip addr add %s dev exn" % (gateway+'/24')
+    call_in_docker(context.bridge, cmd)
+
+    # add static routes for external network
+    cmd = "ip route add %s via %s" % (network, external_ip)
+    call_in_docker(context.bridge, cmd)
+
+
+@then('check l3 logicalport ping address "{host}" "{veth}" "{ip}"')
+def check_ping_address(context, host, veth, ip):
+
+    host_map = {"host1": context.host1, "host2": context.host2}
+
+    flag = veth[-1:]
+    ns = "ns" + flag
+
+    # test ping
+    cmd = "ip netns exec %s ping %s -w 10 -c 5" % (ns, ip)
+    result = call_in_docker(host_map[host],cmd)
+
+    pattern = re.compile("(\d)% packet loss")
+
+    match = pattern.search(result)
+    assert match is not None
+
+    if match:
+        loss = int(match.groups()[0])
+        assert loss <= 10

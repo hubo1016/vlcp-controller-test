@@ -19,7 +19,7 @@ def init_environment(context, base_image):
     logger.info("init kvdb ..")
     # 1. create redis kvdb
 
-    db_image = "redis"
+    db = "redis"
     if 'db' in context.config.userdata:
         db = context.config.userdata['db']
         if db == 'zookeeper':
@@ -224,6 +224,9 @@ def clear_host_ns_env(context,host):
     for i in range(1,10):
         try:
             cmd = "ovs-vsctl del-port veth%d 2>/dev/null 1>/dev/null" % i
+            call_in_docker(host, cmd)
+
+            cmd = "ip link del veth%s" % i
             call_in_docker(host, cmd)
 
             cmd = "ip netns del ns%d" % i
