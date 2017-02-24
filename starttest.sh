@@ -14,7 +14,7 @@ if [ "$tag" == "" ]; then
     tag=python2.7
 fi
 
-if [ "$tag" == "" ]; then
+if [ "$kvdb" == "" ]; then
     kvdb=redis
 fi
 
