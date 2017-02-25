@@ -3,7 +3,7 @@ from apis import *
 from utils import *
 
 import re
-
+import time
 
 
 @Given ('create vlan physicalnetwork "{network_id}"')
@@ -258,3 +258,23 @@ def create_special_physicalport(context, name, host, physicalnetwork):
     command = "curl -s '%s'" % c
 
     call_in_docker(host_map[host], command)
+
+
+@when('restart kvdb')
+def restart_kvdb(context):
+
+    id = context.kvdb
+    cmd = 'docker restart %s' % id
+
+    subprocess.check_call(cmd, shell=True)
+
+    time.sleep(2)
+
+
+@when('stop controller "{host}"')
+def stop_controller(context, host):
+    host_map = {"host1": context.host1, "host2": context.host2}
+
+    cmd = "supervisorctl stop vlcp"
+    call_in_docker(host_map[host], cmd)
+

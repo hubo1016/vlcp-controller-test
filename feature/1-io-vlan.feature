@@ -42,5 +42,10 @@ Feature: ioprocessing vlan
      then check two logicalport ping "host1" "veth1" "host2" "veth1"
 
 
+    Scenario: failover situation
+     when restart kvdb
+     then check two logicalport ping "host1" "veth1" "host2" "veth1"
+     when stop controller "host1"
+     then check two logicalport ping "host1" "veth1" "host2" "veth1"
 
 

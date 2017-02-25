@@ -18,3 +18,9 @@ Feature: ioprocessing vxlan prepush
         when ovs add interface "veth1" "963008a6" "host2" "be:cf:72:24:77:b0"
         then check prepush "be:cf:72:24:77:b0" on "host1"
         and check two logicalport ping "host1" "veth1" "host2" "veth1"
+
+    Scenario: failover situation
+        when restart kvdb
+        then check two logicalport ping "host1" "veth1" "host2" "veth1"
+        when stop controller "host1"
+        then check two logicalport ping "host1" "veth1" "host2" "veth1"
