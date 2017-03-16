@@ -278,3 +278,10 @@ def stop_controller(context, host):
     cmd = "supervisorctl stop vlcp"
     call_in_docker(host_map[host], cmd)
 
+@when('restart controller "{host}"')
+def restart_controller(context, host):
+    host_map = {"host1": context.host1, "host2": context.host2}
+
+    cmd = "supervisorctl restart vlcp"
+    call_in_docker(host_map[host], cmd)
+

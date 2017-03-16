@@ -60,3 +60,7 @@ Feature: l3switch arp prepush
         and remove logicalnetwork "27807868"
         and delete physicalport "vxlan0"
         and remove physicalnetwork "edac6346"
+
+    Scenario: unload module
+        given unload module "random"
+        then check unload module success

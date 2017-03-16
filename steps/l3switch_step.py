@@ -1,6 +1,11 @@
+import random
+import logging
+
 from behave import *
 from apis import *
 from utils import *
+
+logger = logging.getLogger(__name__)
 
 @given('create subnet "{subnet_id}","{logicalnetwork}","{cidr}" "{gateway}"')
 def add_subnet(context, subnet_id, logicalnetwork, cidr, gateway):
@@ -507,3 +512,55 @@ def check_ping_address(context, host, veth, ip):
     if match:
         loss = int(match.groups()[0])
         assert loss <= 10
+
+
+@given('unload module "{module}"')
+def unload_module(context, module = "random"):
+
+    url = 'http://127.0.0.1:8081/manager/activemodules'
+    cmd = 'curl -s "%s"' % url
+
+    result = call_in_docker(context.host1, cmd)
+
+    json_result = json.loads(result)
+
+    modules = json_result['result']
+
+    modules = dict((k,v) for k,v in modules.items()
+                   if k != 'webapi'
+                   and k != "httpserver"
+                   and k != "manager")
+    keys = [key for key in modules]
+
+    if module == "random":
+        unload_module_key = keys[random.randint(0, len(keys) - 1)]
+        unload_module_path = modules[unload_module_key]
+    else:
+        assert module in modules
+        unload_module_path = modules[module]
+
+    context.unload_module = unload_module_path
+
+    logger.info(" unload module path %r", unload_module_path)
+
+    url = 'http://127.0.0.1:8081/manager/unloadmodule?path=%s' % unload_module_path
+    cmd = 'curl -s "%s"' % url
+
+    call_in_docker(context.host1, cmd)
+
+
+@then ('check unload module success')
+def check_unload_module(context):
+    assert hasattr(context,"unload_module")
+    unload_module = context.unload_module
+
+    url = 'http://127.0.0.1:8081/manager/activemodules'
+    cmd = 'curl -s "%s"' % url
+
+    result = call_in_docker(context.host1, cmd)
+
+    json_result = json.loads(result)
+
+    modules = json_result['result']
+
+    assert unload_module not in modules
