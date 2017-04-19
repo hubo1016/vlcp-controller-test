@@ -7,8 +7,9 @@ pip -V
 imagename=vlcp-controller/test
 
 tag=$1
-coverage=$2
-kvdb=$3
+kvdb=$2
+coverage=$3
+
 
 if [ "$tag" == "" ]; then
     tag=python2.7
