@@ -103,8 +103,12 @@ def after_feature(context, feature):
 
     if feature.name in ["ioprocessing vxlan vtep"]:
         uninit_vtep_bridge(context.bridge)
-
-        # bridge ovs will discard all flow, restart it to install normal flow
+        
+        # discard all flows manaul , restart ovs can't delete flows bind with vtep
+        cmd = "ovs-ofctl del-flows br0"
+        call_in_docker(context.bridge, cmd)
+        
+        # restart ovs to install normal flow
         cmd = "/usr/local/share/openvswitch/scripts/ovs-ctl restart --system-id=random"
         call_in_docker(context.bridge, cmd)
 
