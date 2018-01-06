@@ -407,7 +407,16 @@ def collect_coverage_report(host, file):
     cmd = "/opt/coverage combine --rcfile=/opt/coverage.conf"
     call_in_docker(host, cmd)
 
-    cmd = "/opt/coverage html --rcfile=/opt/coverage.conf"
+    cmd = "docker cp %s:/opt/report_file .coverage" % host
+    subprocess.check_call(cmd, shell=True)
+    
+    cmd = "/opt/coverage xml --rcfile=/opt/coverage.conf -o /opt/coverage.xml -i"
+    call_in_docker(host, cmd)
+
+    cmd = "docker cp %s:/opt/coverage.xml ." % host
+    subprocess.check_call(cmd, shell=True)
+    
+    cmd = "/opt/coverage html --rcfile=/opt/coverage.conf -i"
     call_in_docker(host, cmd)
 
     cmd = "docker cp %s:/opt/html_file ." % host
@@ -416,7 +425,7 @@ def collect_coverage_report(host, file):
     cmd = "docker cp %s:/opt/coverage_report ." % host
     subprocess.check_call(cmd, shell=True)
 
-
+    
 def get_flow_map(host):
 
     url = "http://127.0.0.1:8081/openflowmanager/lastacquiredtables"
