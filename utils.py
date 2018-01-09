@@ -406,9 +406,6 @@ def collect_coverage_report(host, file):
 
     cmd = "/opt/coverage combine --rcfile=/opt/coverage.conf"
     call_in_docker(host, cmd)
-
-    cmd = "docker cp %s:/opt/report_file .coverage" % host
-    subprocess.check_call(cmd, shell=True)
     
     cmd = "/opt/coverage xml --rcfile=/opt/coverage.conf -o /opt/coverage.xml -i"
     call_in_docker(host, cmd)
