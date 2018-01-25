@@ -12,4 +12,4 @@ fi
 
 python --version
 
-bash -xe starttest.sh $venv redis coverage
+bash -xe starttest.sh $venv redis coverage 

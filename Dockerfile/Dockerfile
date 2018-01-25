@@ -4,6 +4,7 @@ FROM {{base}}
 RUN apt-get update && apt-get install -y --no-install-recommends \
                               wget \
                               uuid-runtime \
+                              kmod \
                               curl \
                               iproute2 \
                               iputils-ping \
@@ -12,11 +13,25 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
 
 
 # install openvswitch
-RUN wget -q http://openvswitch.org/releases/openvswitch-{{ovs_version}}.tar.gz && \
-                           tar zxf openvswitch-{{ovs_version}}.tar.gz && \
-                           cd openvswitch-{{ovs_version}} && \
-                           ./configure && make && make install
+# RUN wget -q http://openvswitch.org/releases/openvswitch-{{ovs_version}}.tar.gz && \
+#                           tar zxf openvswitch-{{ovs_version}}.tar.gz && \
+#                           cd openvswitch-{{ovs_version}} && \
+#                           ./configure && make && make install
 
+COPY *.deb openvswitch-{{ovs_version}}.tar.gz /root/
+
+
+RUN dpkg -i /root/openvswitch-common_{{ovs_version}}-1_amd64.deb && \
+    dpkg -i /root/openvswitch-switch_{{ovs_version}}-1_amd64.deb && \
+    dpkg -i /root/python-openvswitch_{{ovs_version}}-1_all.deb && \
+    dpkg -i /root/openvswitch-vtep_{{ovs_version}}-1_amd64.deb && \
+    ln -sf /usr/share/openvswitch/ /usr/local/share/openvswitch  && \
+    mkdir -p /usr/local/var/run/ && \
+    ln -sf /var/run/openvswitch/ /usr/local/var/run/openvswitch && \
+    mkdir -p /usr/local/etc && \
+    ln -sf /etc/openvswitch/ /usr/local/etc/openvswitch && \
+    tar zxf /root/openvswitch-{{ovs_version}}.tar.gz && cp -r openvswitch-{{ovs_version}}/python /usr/local/share/openvswitch/    
+                           
 
 # install pip and requirement
 RUN if [ ! -e /usr/local/bin/pip2 ]; then : \

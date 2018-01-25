@@ -11,7 +11,12 @@ python:
  
 services:
   - docker
+  
+cache:
+  directories:
+    - cache
+    
 # command to run tests
-script: sudo bash -xe ci_test.sh
+script: sudo -H bash -xe ci_test.sh
 
 
