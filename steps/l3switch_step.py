@@ -1,5 +1,6 @@
 import random
 import logging
+import time
 
 from behave import *
 from apis import *
@@ -97,6 +98,8 @@ def create_router_interface(context, router, subnet):
     command = "curl -s '%s'" % c
 
     call_in_docker(context.host1, command)
+    
+    time.sleep(1)
 
 
 @given('remove router interface "{router}" "{subnet}"')
@@ -454,7 +457,7 @@ def remove_special_router(context, id):
 
 @given('config bridge as external {network} gateway {gateway}')
 def config_bridge_as_external_gateway(context, network, gateway):
-
+    
     # get external_ip
 
     url = 'http://127.0.0.1:8081/ovsdbmanager/getsystemids'
