@@ -33,10 +33,15 @@ fi
 base=python:2.7
 
 if [ "${tag:0:6}" == "python" ]; then
-     base=python:${tag:6}
+    t=${tag:6}
+    if [[ "$t" == *-dev ]]; then
+        t=${t%-dev}-rc
+    fi
+    base=python:${t}
+elif [ "${tag:0:5}" == "pypy3" ]; then
+    base=pypy:3
 elif [ "${tag:0:4}" == "pypy" ]; then
-     # only support pypy 2
-     base=pypy:2-5
+    base=pypy:2
 fi
 
 pip install -r requirements.txt

@@ -2,8 +2,8 @@
 
 venv=python2.7
 
-if [ "${TRAVIS_PYTHON_VERSION}" == "pypy-5.4" ]; then
-	venv=pypy-5.4
+if [ "${TRAVIS_PYTHON_VERSION:0:4}" == "pypy" ]; then
+	venv=${TRAVIS_PYTHON_VERSION}
 else
 	venv=python${TRAVIS_PYTHON_VERSION}
 fi
