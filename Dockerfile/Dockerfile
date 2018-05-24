@@ -47,13 +47,9 @@ RUN if [ ! -e /usr/local/bin/pip2 ]; then : \
          && ln -sf $(which pip2) /opt/pip \
     ; fi
 
-RUN if [ ! -e /usr/local/bin/pypy ]; then : \
-        && ln -sf $(which python) /opt/python \
-        && ln -sf $(which coverage) /opt/coverage \
-    ; else \
-        ln -sf $(which pypy) /opt/python \
-        && ln -sf $(which coverage) /opt/coverage \
-    ; fi
+RUN ([ -e /usr/local/bin/pypy ] && ln -sf $(which pypy) /opt/python && ln -sf $(which coverage) /opt/coverage) || \
+    ([ -e /usr/local/bin/pypy3 ] && ln -sf $(which pypy3) /opt/python && ln -sf $(which coverage) /opt/coverage) || \
+    (ln -sf $(which python) /opt/python && ln -sf $(which coverage) /opt/coverage)
 
 
 CMD ["/bin/bash"]
