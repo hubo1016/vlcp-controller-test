@@ -60,7 +60,7 @@ if [ "`docker images -q ${imagename}:${tag}`" == "" ]; then
     if [ ! -e "${cache_dir}/${ovs_common_deb}" ] || [ ! -e "$cache_dir/${ovs_switch_deb}" ] || [ ! -e "$cache_dir"/${ovs_vtep_deb} ] || [ ! -e "$cache_dir"/${ovs_python_deb} ] || [ ! -e "$cache_dir"/${ovs_package} ]; then
         chmod +x Dockerfile/build_ovs.sh
         tmp_file=`cat /proc/sys/kernel/random/uuid`
-        docker run -it -v ${cache_dir}:${cache_dir} -v `pwd`/Dockerfile:/tmp/$tmp_file -e "CACHE_DIR=${cache_dir}" python:2.7 /tmp/$tmp_file/build_ovs.sh "${ovs_version}"
+        docker run -it -v ${cache_dir}:${cache_dir} -v `pwd`/Dockerfile:/tmp/$tmp_file -e "CACHE_DIR=${cache_dir}" $base /tmp/$tmp_file/build_ovs.sh "${ovs_version}"
     fi
     
     # copy ovs tar to build docker context
