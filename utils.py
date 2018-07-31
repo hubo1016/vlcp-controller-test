@@ -113,7 +113,8 @@ def uninit_environment(context):
 
         if hasattr(context, "host2"):
             remove_host_vlan_interface(context.bridge, context.host2)
-
+        if getattr(context, 'failed', False):
+            print_log_in_docker(context.bridge)
         remove_docker(context.bridge)
         # in differnet level , we can not del attr
         # delattr(context, "bridge")
@@ -124,18 +125,26 @@ def uninit_environment(context):
 
     if hasattr(context, "host1"):
         remove_host_vxlan_interface(context.host1)
+        if getattr(context, 'failed', False):
+            print_log_in_docker(context.bridge)
         remove_docker(context.host1)
         # delattr(context, "host1")
 
     if hasattr(context, "host2"):
         remove_host_vxlan_interface(context.host2)
+        if getattr(context, 'failed', False):
+            print_log_in_docker(context.bridge)
         remove_docker(context.host2)
         # delattr(context, "host2")
 
     if hasattr(context, "vtep1"):
+        if getattr(context, 'failed', False):
+            print_log_in_docker(context.bridge)
         remove_docker(context.vtep1)
 
     if hasattr(context, "vtep2"):
+        if getattr(context, 'failed', False):
+            print_log_in_docker(context.bridge)
         remove_docker(context.vtep2)
 
 
@@ -483,3 +492,8 @@ def uninit_vtep_bridge(bridge):
     cmd = "vtep-ctl del-ps br0"
 
     call_in_docker(bridge, cmd)
+
+
+def print_log_in_docker(docker)
+    cmd = "bash -c 'cat /var/log/vlcp.error.log || true'"
+    print(call_in_docker(docker, cmd))

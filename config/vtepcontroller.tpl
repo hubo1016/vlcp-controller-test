@@ -15,9 +15,13 @@ server.logging.handlers={'fileHandler':{'class':'logging.handlers.TimedRotatingF
                                         'filename':'/var/log/vlcp.log',
                                         'when':'midnight',
                                         'interval':1,
-                                        'backupCount':7}}
+                                        'backupCount':7},
+                         'fileHandler2':{'class':'logging.handlers.FileHandler',
+                                        'formatter':'fileFormatter',
+                                        'filename':'/var/log/vlcp.error.log',
+                                        'level':'WARNING'}}
 server.logging.root={'level':'INFO',
-                     'handlers':['fileHandler']}
+                     'handlers':['fileHandler','fileHandler2']}
 #protocol.openflow.debugging = True
 #protocol.redis.debugging = True
 #module.l2switch.learning=False
