@@ -16,7 +16,7 @@ server.logging.handlers={'fileHandler':{'class':'logging.handlers.TimedRotatingF
                                         'when':'midnight',
                                         'interval':1,
                                         'backupCount':7},
-                         'fileHandler2':{'class':'logging.handlers.FileHandler',
+                         'fileHandler2':{'class':'logging.FileHandler',
                                         'formatter':'fileFormatter',
                                         'filename':'/var/log/vlcp.error.log',
                                         'level':'WARNING'}}
