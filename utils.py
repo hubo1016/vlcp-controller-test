@@ -494,6 +494,6 @@ def uninit_vtep_bridge(bridge):
     call_in_docker(bridge, cmd)
 
 
-def print_log_in_docker(docker)
+def print_log_in_docker(docker):
     cmd = "bash -c 'cat /var/log/vlcp.error.log || true'"
     print(call_in_docker(docker, cmd))
