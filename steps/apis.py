@@ -83,9 +83,32 @@ def create_logical_network(id, physicalnetwork, **kwargs):
 
     return url
 
+def create_logical_network_with_acl(id, physicalnetwork, acl, **kwargs):
+
+    params = {"id": id, "physicalnetwork":physicalnetwork, "acl": '`'+acl+'`'}
+
+    params.update(kwargs)
+
+    params = urlencode(params)
+
+    url = endpoint + "/viperflow/createlogicalnetwork?%s" % params
+
+    return url
+
 def update_logical_network(id, **kwargs):
 
     params = {"id":id}
+    params.update(kwargs)
+
+    params = urlencode(params)
+
+    url = endpoint + "/viperflow/updatelogicalnetwork?%s" % params
+
+    return url
+
+def update_logical_network_acl(id, acl, **kwargs):
+
+    params = {"id": id, "acl": '`'+acl+'`'}
     params.update(kwargs)
 
     params = urlencode(params)
@@ -131,6 +154,58 @@ def create_logical_port(id, logicalnetwork, **kwargs):
     command = "import urllib2; urllib2.urlopen('%s').read()" % url
 
     return url
+
+def create_logical_port_with_ingressacl(id, logicalnetwork, ingressacl, **kwargs):
+
+    params = {"id": id, "logicalnetwork": logicalnetwork, "ingress_acl": '`'+ingressacl+'`'}
+
+    params.update(kwargs)
+
+    params = urlencode(params)
+
+    url = endpoint + "/viperflow/createlogicalport?%s" % params
+
+    return url
+
+def create_logical_port_with_egressacl(id, logicalnetwork, egressacl, **kwargs):
+
+    params = {"id": id, "logicalnetwork": logicalnetwork, "egress_acl": '`'+egressacl+'`'}
+    print(params)
+    params.update(kwargs)
+
+    params = urlencode(params)
+
+    url = endpoint + "/viperflow/createlogicalport?%s" % params
+
+    print(params)
+    print(url)
+
+    return url
+
+def update_logical_port_egressacl(id, egressacl, **kwargs):
+
+    params = {"id": id, "egress_acl": '`'+egressacl+'`'}
+
+    params.update(kwargs)
+
+    params = urlencode(params)
+
+    url = endpoint + "/viperflow/updatelogicalport?%s" % params
+
+    return url
+
+def update_logical_port_ingressacl(id, ingressacl, **kwargs):
+
+    params = {"id": id, "ingress_acl": '`'+ingressacl+'`'}
+
+    params.update(kwargs)
+
+    params = urlencode(params)
+
+    url = endpoint + "/viperflow/updatelogicalport?%s" % params
+
+    return url
+
 
 
 def remove_logical_port(id):
@@ -241,9 +316,33 @@ def create_subnet(subnet_id, logicalnetwork, cidr, gateway, **kwargs):
 
     return url
 
+def create_subnet_withacl(subnet_id, logicalnetwork, cidr, gateway, acl, **kwargs):
+
+    params = {"id":subnet_id, "logicalnetwork": logicalnetwork,
+              "cidr": cidr, "gateway": gateway, "acl": '`'+acl+'`'}
+
+    params.update(kwargs)
+
+    params = urlencode(params)
+
+    url = endpoint + "/viperflow/createsubnet?%s" % params
+
+    return url
+
 def update_subnet(id, **kwargs):
 
     params = {"id":id}
+    params.update(kwargs)
+
+    params = urlencode(params)
+
+    url = endpoint + "/viperflow/updatesubnet?%s" % params
+
+    return url
+
+def update_subnet_acl(id, acl, **kwargs):
+
+    params = {"id": id, "acl": '`'+acl+'`'}
     params.update(kwargs)
 
     params = urlencode(params)
