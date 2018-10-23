@@ -21,10 +21,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
 COPY *.deb openvswitch-{{ovs_version}}.tar.gz /root/
 
 
-RUN dpkg -i /root/openvswitch-common_{{ovs_version}}-1_amd64.deb && \
-    dpkg -i /root/openvswitch-switch_{{ovs_version}}-1_amd64.deb && \
-    dpkg -i /root/python-openvswitch_{{ovs_version}}-1_all.deb && \
-    dpkg -i /root/openvswitch-vtep_{{ovs_version}}-1_amd64.deb && \
+RUN dpkg -i *.deb && \
     ln -sf /usr/share/openvswitch/ /usr/local/share/openvswitch  && \
     mkdir -p /usr/local/var/run/ && \
     ln -sf /var/run/openvswitch/ /usr/local/var/run/openvswitch && \
