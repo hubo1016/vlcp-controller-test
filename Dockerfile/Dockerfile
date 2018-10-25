@@ -21,7 +21,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
 COPY *.deb /root/
 
 
-RUN dpkg -i *.deb
+RUN dpkg -i /root/*.deb
 
 
 # install pip and requirement
