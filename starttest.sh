@@ -70,7 +70,7 @@ if [ "`docker images -q ${imagename}:${tag}`" == "" ]; then
     [ ! -e "Dockerfile/${ovs_package}" ] && ( cp ${cache_dir}/${ovs_package} Dockerfile)
     
     # copy ovs deb to build docker context
-    [ ! -e "Dockerfile/${ovs_lib_deb}" ] && ( cp ${cache_dir}/${ovs_lib_deb} Dockerfile)
+    [ ! -e "Dockerfile/${ovs_lib_deb}" && -e ${cache_dir}/${ovs_lib_deb} ] && ( cp ${cache_dir}/${ovs_lib_deb} Dockerfile)
     [ ! -e "Dockerfile/${ovs_common_deb}" ] && ( cp ${cache_dir}/${ovs_common_deb} Dockerfile)
     [ ! -e "Dockerfile/${ovs_switch_deb}" ] && ( cp ${cache_dir}/${ovs_switch_deb} Dockerfile)
     [ ! -e "Dockerfile/${ovs_vtep_deb}" ] && ( cp ${cache_dir}/${ovs_vtep_deb} Dockerfile)

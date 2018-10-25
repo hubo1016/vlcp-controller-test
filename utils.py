@@ -175,7 +175,7 @@ def init_docker_host(context, docker):
     # install ovs ; do in base image Dockerfile
 
     # start ovs server
-    cmd = "/usr/local/share/openvswitch/scripts/ovs-ctl start --system-id=random"
+    cmd = "/usr/share/openvswitch/scripts/ovs-ctl start --system-id=random"
     call_in_docker(docker, cmd)
 
     # copy wheel file
@@ -247,7 +247,7 @@ def clear_host_ns_env(context,host):
 def init_docker_bridge(bridge):
 
     # start ovs server
-    cmd = "/usr/local/share/openvswitch/scripts/ovs-ctl start --system-id=random"
+    cmd = "/usr/share/openvswitch/scripts/ovs-ctl start --system-id=random"
     call_in_docker(bridge, cmd)
 
     cmd = "ovs-vsctl add-br br0"
@@ -459,10 +459,10 @@ def str_3_2(data):
 def init_vtep_bridge(bridge):
 
     # init vtep ovsdb
-    cmd = "ovsdb-tool create /usr/local/etc/openvswitch/vtep.db /usr/local/share/openvswitch/vtep.ovsschema"
+    cmd = "ovsdb-tool create /etc/openvswitch/vtep.db /usr/share/openvswitch/vtep.ovsschema"
     call_in_docker(bridge, cmd)
 
-    cmd = "ovs-appctl -t ovsdb-server ovsdb-server/add-db /usr/local/etc/openvswitch/vtep.db"
+    cmd = "ovs-appctl -t ovsdb-server ovsdb-server/add-db /etc/openvswitch/vtep.db"
     call_in_docker(bridge, cmd)
 
     # add ovsdb remote
@@ -480,10 +480,10 @@ def init_vtep_bridge(bridge):
     call_in_docker(bridge, cmd)
 
     # start vtep
-    cmd = "bash -c 'PYTHONPATH=/usr/local/share/openvswitch/python python2 " \
-          "/usr/local/share/openvswitch/scripts/ovs-vtep " \
-          "--log-file=/usr/local/var/log/openvswitch/ovs-vtep.log " \
-          "--pidfile=/usr/local/var/run/openvswitch/ovs-vtep.pid --detach br0'"
+    cmd = "bash -c 'PYTHONPATH=/usr/share/openvswitch/python python2 " \
+          "/usr/share/openvswitch/scripts/ovs-vtep " \
+          "--log-file=/var/log/openvswitch/ovs-vtep.log " \
+          "--pidfile=/var/run/openvswitch/ovs-vtep.pid --detach br0'"
     call_in_docker(bridge, cmd)
 
 

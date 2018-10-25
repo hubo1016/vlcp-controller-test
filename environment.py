@@ -109,7 +109,7 @@ def after_feature(context, feature):
         call_in_docker(context.bridge, cmd)
         
         # restart ovs to install normal flow
-        cmd = "/usr/local/share/openvswitch/scripts/ovs-ctl restart --system-id=random"
+        cmd = "/usr/share/openvswitch/scripts/ovs-ctl restart --system-id=random"
         call_in_docker(context.bridge, cmd)
 
 
