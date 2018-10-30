@@ -67,7 +67,7 @@ if [ "`docker images -q ${imagename}:${tag}`" == "" ]; then
     # copy ovs tar to build docker context
     # deb build not have python lib , so we cache ovs package source
     # install ovs python lib from ovs package source
-    [ ! -e "Dockerfile/${ovs_package}" ] && ( cp ${cache_dir}/${ovs_package} Dockerfile)
+    # [ ! -e "Dockerfile/${ovs_package}" ] && ( cp ${cache_dir}/${ovs_package} Dockerfile)
     
     # copy ovs deb to build docker context
     [ ! -e "Dockerfile/${ovs_lib_deb}" -a -e ${cache_dir}/${ovs_lib_deb} ] && ( cp ${cache_dir}/${ovs_lib_deb} Dockerfile)
