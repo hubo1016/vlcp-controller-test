@@ -23,5 +23,5 @@ apt-get install -y graphviz autoconf automake bzip2 debhelper dh-autoreconf libs
 (cd openvswitch-${ovs_version}; DEB_BUILD_OPTIONS='parallel=8 nocheck' fakeroot debian/rules binary)
 
 cp *.deb $cache_dir
-cp openvswitch-${ovs_version}.tar.gz $cache_dir
 
+rm -rf openvswitch-${ovs_version}.tar.gz openvswitch-${ovs_version} *.deb
