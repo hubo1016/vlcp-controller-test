@@ -126,25 +126,25 @@ def uninit_environment(context):
     if hasattr(context, "host1"):
         remove_host_vxlan_interface(context.host1)
         if getattr(context, 'failed', False):
-            print_log_in_docker(context.bridge)
+            print_log_in_docker(context.host1)
         remove_docker(context.host1)
         # delattr(context, "host1")
 
     if hasattr(context, "host2"):
         remove_host_vxlan_interface(context.host2)
         if getattr(context, 'failed', False):
-            print_log_in_docker(context.bridge)
+            print_log_in_docker(context.host2)
         remove_docker(context.host2)
         # delattr(context, "host2")
 
     if hasattr(context, "vtep1"):
         if getattr(context, 'failed', False):
-            print_log_in_docker(context.bridge)
+            print_log_in_docker(context.vtep1)
         remove_docker(context.vtep1)
 
     if hasattr(context, "vtep2"):
         if getattr(context, 'failed', False):
-            print_log_in_docker(context.bridge)
+            print_log_in_docker(context.vtep2)
         remove_docker(context.vtep2)
 
 
