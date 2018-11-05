@@ -40,3 +40,4 @@ server.startup = (
 {{zookeeper_db}}
 {{db_proxy}}
 {{proxy_notifier}}
+protocol.openflow.allowedversions=(4,5)

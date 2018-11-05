@@ -108,8 +108,8 @@ def after_feature(context, feature):
         cmd = "ovs-ofctl del-flows br0"
         call_in_docker(context.bridge, cmd)
         
-        # restart ovs to install normal flow
-        cmd = "/usr/local/share/openvswitch/scripts/ovs-ctl restart --system-id=random"
+        # install normal flow
+        cmd = "ovs-ofctl add-flow br0 action=normal"
         call_in_docker(context.bridge, cmd)
 
 

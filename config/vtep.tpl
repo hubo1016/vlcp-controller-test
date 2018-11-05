@@ -1,7 +1,7 @@
 #server.debugging=True
 module.jsonrpcserver.ovsdb=True
 module.jsonrpcserver.client=True
-module.jsonrpcserver.url='unix:///usr/local/var/run/openvswitch/db.sock'
+module.jsonrpcserver.url='unix:///var/run/openvswitch/db.sock'
 module.httpserver.url=None
 module.httpserver.vhost.api.url='tcp://localhost:8081'
 #module.httpserver.vhost.docker.url='unix:///run/docker/plugins/vlcp.sock'
@@ -52,3 +52,4 @@ server.startup = ('vlcp.service.sdn.viperflow.ViperFlow',
 {{zookeeper_db}}
 {{db_proxy}}
 {{proxy_notifier}}
+protocol.openflow.allowedversions=(4,5)
