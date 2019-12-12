@@ -14,15 +14,15 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
 
 
 # install openvswitch
-RUN wget -q http://openvswitch.org/releases/openvswitch-{{ovs_version}}.tar.gz && \
-                           tar zxf openvswitch-{{ovs_version}}.tar.gz && \
-                           cd openvswitch-{{ovs_version}} && \
-                           ./configure && make && make install
+# RUN wget -q http://openvswitch.org/releases/openvswitch-{{ovs_version}}.tar.gz && \
+#                           tar zxf openvswitch-{{ovs_version}}.tar.gz && \
+#                           cd openvswitch-{{ovs_version}} && \
+#                           ./configure && make && make install
 
-#COPY *.deb /root/
+COPY *.deb /root/
 
 
-#RUN dpkg -i /root/*.deb
+RUN dpkg -i /root/*.deb
 
 
 # install pip and requirement
