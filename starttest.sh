@@ -23,7 +23,7 @@ if [ "$kvdb" == "" ]; then
 fi
 
 if [ "$ovs_version" == "" ]; then
-    ovs_version=2.5.9
+    ovs_version=2.9.5
 fi
 
 if [ "$cache_dir" == "" ]; then
