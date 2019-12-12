@@ -1,13 +1,11 @@
 language: python
-sudo: required
 python:
-  - "3.5"
-  - "3.6"
-  - "pypy3.5"
+  - "3.8"
+  - "pypy3"
 
 env:
   - KV_DB=redis
-  - KV_DB=redis ovs_version=2.9.3
+  - KV_DB=redis ovs_version=2.9.5
  
 services:
   - docker
