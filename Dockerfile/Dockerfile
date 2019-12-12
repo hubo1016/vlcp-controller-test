@@ -9,6 +9,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
                               iproute2 \
                               iputils-ping \
                               isc-dhcp-client \
+							  python-six \
                    && rm -rf /var/lib/apt/lists/*
 
 
