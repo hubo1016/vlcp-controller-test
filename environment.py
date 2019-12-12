@@ -57,7 +57,7 @@ def before_feature(context, feature):
         cmd = "redis-cli FLUSHALL"
         if 'db' in context.config.userdata:
             if context.config.userdata['db'] == "zookeeper":
-                cmd = "bin/zkCli.sh rmr /vlcp"
+                cmd = "bin/zkCli.sh rmr /vlcp || echo not exists"
         clear_kvdb(context, cmd)
 
         if hasattr(context, "host1"):
